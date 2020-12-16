@@ -25,7 +25,7 @@
     if (empty($_SESSION["user_id"]))
     {
         echo '<a href="/about.php">Om oss</a>';
-        echo '<a href="/signUp">Bli medlem</a>';             
+        echo '<a href="./signIn.php">Bli medlem</a>';             
         echo '<a href="./login.php" id="sign-in-link">Logga in</a>';
     }    
     else

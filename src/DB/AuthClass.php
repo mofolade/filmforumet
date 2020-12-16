@@ -41,30 +41,25 @@ class AuthClass extends MySQL{
         $userName = '';
         $userId=0;
         $password = '';
-        $role='';
+        $roleId=0;
 
-        $stmt = $this->connection -> prepare('SELECT id, name, password, role FROM users WHERE email = ? AND is_active = 1 LIMIT 1');
+        $stmt = $this->connection -> prepare('SELECT id, name, password FROM users WHERE email = ? AND is_active = 1 LIMIT 1');
         $stmt -> bind_param('s', $login['email']);
         $stmt -> execute();
         $stmt -> store_result();
-        $stmt -> bind_result($userId, $userName, $password, $role);
+        $stmt -> bind_result($userId, $userName, $password);
         $stmt -> fetch();
-        if($userId > 0){
+        if($userId > 0){            
+            //if(password_verify($login['password'], $password)){
             if(password_verify($login['password'], $password)){
                 $this->setSession($userId);
                 return json_encode(["success" => 1,
                                     "user_id" => $userId,
                                     "name" => $userName,
-                                    "role" => $role,
                                     "msg"=> "You are now logged in."]);
             }
-            else{
-                return json_encode(["success"=> 0,"msg"=> "Login failed."]);
-            }
-        }else{
-            return json_encode(["success"=> 0,"msg"=> "Login failed."]);
         }
-        return json_encode(["success"=> 0,"msg"=> "Login failed."]);
+        return json_encode(["success"=> 0,"msg"=> "Login failed 3."]);
     }
 
     private function setSession($userId) {
