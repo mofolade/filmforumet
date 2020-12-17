@@ -67,7 +67,7 @@ class TopicCommentClass extends MySQL{
         $newCommentId=0;
 
         $stmtInsert = $this->connection -> prepare('INSERT INTO topic_comments(comment,topic_id,user_id,created) VALUES(?,?,?,?)');
-        $stmtInsert -> bind_param('siis', $newComment['imdbId'], $newComment['topicId'], $newComment['userId'], $currentDate);
+        $stmtInsert -> bind_param('siis', $newComment['description'], $newComment['topicId'], $newComment['userId'], $currentDate);
         if($stmtInsert -> execute()){
             $newCommentId = mysqli_insert_id($this->connection);
             $stmtInsert->close();

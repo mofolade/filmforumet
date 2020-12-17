@@ -33,6 +33,7 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    min-height: 50px;
 }
 .bp .bg-light {
     background-color: #f9f9f9!important;
@@ -290,9 +291,7 @@ color: #000000!important;
     text-decoration: none;
 }
   /* style inputs and link buttons */
-input,
-  .btn,
-  select {
+.login-col input, .btn, select, .topic-col input {
     width: 100%;
     padding: 12px;
     border: none;
@@ -327,6 +326,7 @@ cursor: pointer;
 input[type=submit]:hover {
 background-color: #45a049;
 }
+
 .login-container, .new-user-container {
     position: relative;
     border-radius: 5px;
@@ -342,6 +342,10 @@ background-color: #45a049;
 
 .new-topic-container label{
     color: rgb(148, 141, 141);
+}
+
+.topic-card-little-picture{
+    margin-top: 5px;
 }
 
 label{
@@ -542,7 +546,7 @@ textarea {
     margin: 5px 0 22px 0;
     border: none;
     resize: none;
-    min-height: 200px;
+    min-height: 120px;
 }
 #topics-cover{
     display: flex;
@@ -623,7 +627,6 @@ textarea {
     transition: 0.3s;
     margin-bottom: 15px;
     width: 90%;
-    height: 150px;
     background-color: #fcfcfc;
 }
 .comment-card-container {
