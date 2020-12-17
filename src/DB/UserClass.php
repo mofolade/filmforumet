@@ -85,6 +85,7 @@ class UserClass extends MySQL{
                     return json_encode(["success"=>0,"msg"=>"User Not Inserted!"]);
                 }
             }
+            $stmt->close();
         }
         return json_encode(["success"=>0,"msg"=>"User Not Inserted!"]);
     }
@@ -115,10 +116,9 @@ class UserClass extends MySQL{
             }
             else{
                 
-                $stmt = $this->connection -> prepare('UPDATE users SET name = ? , email = ?, is_club_admin = ? WHERE id = ? ;');
-                $stmt -> bind_param('ssii', $updateUser['username'], 
+                $stmt = $this->connection -> prepare('UPDATE users SET name = ? , email = ? WHERE id = ? ;');
+                $stmt -> bind_param('ssi', $updateUser['username'], 
                                            $updateUser['email'],
-                                           $updateUser['isClubAdmin'],
                                            $userId);
                 if($stmt -> execute()){
                     $stmt->close();                    

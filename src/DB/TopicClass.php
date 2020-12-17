@@ -13,6 +13,24 @@ class TopicClass extends MySQL{
         return $result;
     }
 
+    public function getTopic($topicId){
+        $name='';
+        $image_path='';
+        $description='';
+        if($topicId > 0){
+            //$topicId = mysqli_real_escape_string($this->connection, trim($topicId));
+            $stmt = $this->connection -> prepare('SELECT name, image_path, description FROM topics WHERE id = ?');
+            $stmt -> bind_param('i', $topicId);
+            $stmt -> execute(); // get the mysqli result
+            $stmt -> store_result(); 
+            $stmt -> bind_result($name, $image_path, $description);
+            $stmt -> fetch();
+            $stmt -> free_result(); 
+            return json_encode(["success"=>1,"name"=>$name, "image_path"=>$image_path, "description"=>$description]);
+        }
+        return json_encode(["success"=>0,"msg"=>"Topic does not exist!"]);
+    }
+
     public function addTopic($newTopic){
         $topicId=0;
         $stmt = $this->connection -> prepare('SELECT id FROM topics WHERE imdb_id = ? LIMIT 1');

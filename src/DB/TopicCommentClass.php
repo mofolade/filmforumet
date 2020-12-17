@@ -9,14 +9,56 @@ class TopicCommentClass extends MySQL{
     }
 
     public function getAllCommentsByTopicId($topicId){
-        $row='';
+        $comment='';
+        $user_id=0;
+        $created='';
+        $picture_url='';
+        $id=0;
+        $name='';
+        $getComment=[];
+        $comments=[];
+
         if($topicId > 0){
-            $topicId = mysqli_real_escape_string($this->connection, trim($topicId));
-            $sql = $this->connection -> prepare('SELECT DISTINCT * FROM topic_comments WHERE topic_id = ? ORDER BY created');
-            $sql -> bind_param('i', $topicId);
-            $row = $this->Execute($sql);
+            $stmt = $this->connection -> prepare('SELECT DISTINCT t.id,t.comment,t.user_id,t.created,u.name,u.picture_url
+                                                    FROM topic_comments t,
+                                                         users u
+                                                    WHERE t.user_id = u.id
+                                                      AND topic_id = ? ORDER BY created desc');
+            $stmt -> bind_param('i', $topicId);
+            $stmt -> execute();
+            $stmt -> store_result();
+            $stmt -> bind_result($id,$comment,$user_id,$created,$name,$picture_url);
+            while ($stmt->fetch()) {
+                $getComment = array("id" => $id,
+                                    "comment" => $comment,
+                                    "user_id" => $user_id,
+                                    "created" => $created,
+                                    "name" => $name,
+                                    "picture_url" => $picture_url);
+                array_push($comments, $getComment);
+            }
+            $stmt->close();
         }
-        return $row;
+        return $comments;
+    }
+
+    public function getCommentsInfo($topicId){
+        $sumComments=0;
+        $maxCreated='';
+
+        if($topicId > 0){
+            $stmt = $this->connection -> prepare('SELECT DISTINCT count(id) sumComments,max(created) maxCreated
+                                                    FROM topic_comments
+                                                    WHERE topic_id = ?');
+            $stmt -> bind_param('i', $topicId);
+            $stmt -> execute();
+            $stmt -> bind_result($sumComments,$maxCreated);
+            $stmt -> fetch();
+            $sumComments = $sumComments;
+            $maxCreated=$maxCreated;
+            return json_encode(["success" => 1, "sumComments"=> $sumComments, "maxCreated" => $maxCreated]);
+        }
+        return json_encode(["success" => 0, "sumComments"=> 0, "maxCreated" => '']);
     }
 
     public function addComment($newComment){
