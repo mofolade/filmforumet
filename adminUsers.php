@@ -119,10 +119,10 @@
             </div>
         </div>
         </div>
-        <?php include 'views/footer.php'; ?>
+        <?php include 'src/views/footer.php'; ?>
         </main>
         </div>
-        <?php include 'views/scripts.php'; ?>
+        <?php include 'src/views/scripts.php'; ?>
     </body>
 
 </html>

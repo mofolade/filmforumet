@@ -21,12 +21,7 @@ class UserClass extends MySQL{
 
     public function allUser(){
         $row='';
-        $select = $this->Select($this->table_name,"WHERE is_active = 1","name","","");
-        echo json_encode($select);
-        if ($result = $this->conn->query($select)) {
-
-            if($result) $row = mysqli_fetch_assoc($result);
-        }
+        $row = $this->Select($this->table_name,"WHERE is_active = 1","name","","");
         return $row;
     }
 
