@@ -9,32 +9,6 @@ class AuthClass extends MySQL{
         parent::__construct();
     }
 
-    public function getUser($userID){
-        $userId = 0; 
-        $userName = '';
-        $email = '';
-        $picture_url = '';
-
-        $stmt = $this->connection -> prepare('SELECT u.id, 
-                                                     u.name, 
-                                                     u.email,
-                                                     u.picture_url
-                                               FROM users u
-                                              WHERE u.id = ?
-                                                AND u.is_active = 1 LIMIT 1');
-        $stmt -> bind_param('i', $userID);
-        $stmt -> execute();
-        $stmt -> store_result();
-        $stmt -> bind_result($userId, $userName, $email, $picture_url);
-        $stmt -> fetch();
-        
-        return json_encode(["user_id"       => $userId,
-                            "name"          => $userName,
-                            "email"         => $email,
-                            "picture_url"   => $picture_url]);
-       
-
-    }
 
     /**
      * Login the user based on login and password parameters 
@@ -62,7 +36,7 @@ class AuthClass extends MySQL{
                                     "msg"=> "You are now logged in."]);
             }
         }
-        return json_encode(["success"=> 0,"msg"=> "Login failed 3."]);
+        return json_encode(["success"=> 0,"msg"=> "Login failed."]);
     }
 
     private function setSession($userId) {

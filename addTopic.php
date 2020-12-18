@@ -60,7 +60,7 @@
                         
                     <?php 
                         echo '<form action="'.$_SERVER['REQUEST_URI'].'" method="post" enctype="multipart/form-data">
-                            <div class="row">
+                            <div class="">
                                 <h2 style="text-align:center">Ny topic</h2>';
                         echo '      <div class="topic-col">
                                         <label>Topic namn</label>

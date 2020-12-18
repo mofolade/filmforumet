@@ -53,7 +53,7 @@
             <div class="wrapper">
               <div class="content">
                 <div class="login-container">
-                  <div class="row">
+                  <div class="">
                     <h2 style="text-align:center">Logga in</h2>
                     <div class="login-col">
                       <?php 
@@ -74,15 +74,16 @@
                               Logga in
                               </button>
                           </form>';
-                      ?>
-                          
-                      <div class="hl">
+
+                      /*<div class="hl">
                         <span class="hl-innertext">eller</span>
                       </div>
 
                       <button  onClick="signInButton" class="google btn"><i class="fa fa-google fa-fw">
                       </i> Logga in med Google
-                      </button>
+                      </button>*/
+                      ?>
+                      
                     </div>
                   </div>
                 </div>

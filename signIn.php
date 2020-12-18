@@ -58,6 +58,11 @@
                 $errorMessage = $newUserResp['msg'];
             }
             elseif($newUserResp['success'] == 1){
+                //insert role_id
+                include_once 'src/DB/UserXRoleClass.php';
+                $userRole = new UserXRoleClass();
+                $resp = $userRole->addUserRole($newUserResp['id'],$newUser['roleId']);
+
                 $message = 'Success';
                 echo "<script>window.location.href='./login.php';</script>";
                 exit;
@@ -73,7 +78,7 @@
             <div class="wrapper">
               <div class="content">
                 <div class="login-container">
-                    <div class="row">
+                    <div class="">
                         <h2 style="text-align:center">Registration</h2>
                         <div class="login-col">
                         <div class="alert" id="errorMsg">
@@ -117,6 +122,7 @@
                                 placeholder="';
                                 if(!empty($_SESSION["user_id"])) echo($user['email']);
                         echo '">
+                            <input type="hidden" id="roleId" name="newUser[roleId]" value="3">
                             <button data-test-submit-button="" data-bid-submit-button="" class="bid-btn btn btn-lg btn-fluid mb-4 " type="submit"> 
                             Skapa nytt konto
                             </button>

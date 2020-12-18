@@ -17,16 +17,17 @@ class TopicClass extends MySQL{
         $name='';
         $image_path='';
         $description='';
+        $year=null;
         if($topicId > 0){
             //$topicId = mysqli_real_escape_string($this->connection, trim($topicId));
-            $stmt = $this->connection -> prepare('SELECT name, image_path, description FROM topics WHERE id = ?');
+            $stmt = $this->connection -> prepare('SELECT name, image_path, description, year FROM topics WHERE id = ?');
             $stmt -> bind_param('i', $topicId);
             $stmt -> execute(); // get the mysqli result
             $stmt -> store_result(); 
-            $stmt -> bind_result($name, $image_path, $description);
+            $stmt -> bind_result($name, $image_path, $description,$year);
             $stmt -> fetch();
             $stmt -> free_result(); 
-            return json_encode(["success"=>1,"name"=>$name, "image_path"=>$image_path, "description"=>$description]);
+            return json_encode(["success"=>1,"name"=>$name, "image_path"=>$image_path, "description"=>$description, "year" => $year]);
         }
         return json_encode(["success"=>0,"msg"=>"Topic does not exist!"]);
     }
@@ -48,9 +49,9 @@ class TopicClass extends MySQL{
             $currentDate = $now->format('Y-m-d H:i:s');
             $newTopicId=0;
 
-            $stmtInsert = $this->connection -> prepare('INSERT INTO topics(imdb_id,name,year,created) 
+            $stmtInsert = $this->connection -> prepare('INSERT INTO topics(imdb_id,name,description,year,created) 
                                                     VALUES(?,?,?,?)');
-            $stmtInsert -> bind_param('ssis', $newTopic['imdbId'], $newTopic['name'], $newTopic['year'], $currentDate);
+            $stmtInsert -> bind_param('sssis', $newTopic['imdbId'], $newTopic['name'], $newTopic['description'], $newTopic['year'], $currentDate);
             if($stmtInsert -> execute()){
                 $newTopicId = mysqli_insert_id($this->connection);
                 $stmtInsert->close();

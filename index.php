@@ -33,7 +33,7 @@
                                             <img class="topic-img" src="'.$topic['image_path'].'">
                                         </a>
                                     </div>
-                                    <div class="d-flex flex-direction-column align-items-center mt-5">
+                                    <div class="d-flex flex-direction-column align-items-center">
                                         <div>'.$topic['name'].'</div>
                                         <div>'.$topic['year'].'</div>
                                         <label>Antal inlägg: '.$commentInfo['sumComments'].'</label>
