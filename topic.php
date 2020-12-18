@@ -94,7 +94,7 @@
                                                                     <textarea name="newComment[description]"  id="description" required="required"></textarea>
                                                                     <input type="hidden" name="newComment[topicId]" value="'.$_GET['id'].'">
                                                                     <input type="hidden" name="newComment[userId]" value="'.$currentUser['user_id'].'">
-                                                                    <input type="submit" class="btn-edit" value="Skicka" style="margin-bottom: 5px">
+                                                                    <input type="submit" class="btn-edit" value="Send" style="margin-bottom: 5px">
                                                                 </form>
                                                             </div>                                 
                                                         </div>
@@ -131,7 +131,7 @@
                                     echo '      <form method="post" action="'.$_SERVER['REQUEST_URI'].'">
                                                     <input type="hidden" id="commentId" name="commentId" value="'.$comment['id'].'">
                                                     <input type="hidden" name="method" value="setInactiveComment">
-                                                    <button type="submit" class="btn-delete" type="submit">Ta bort</button>
+                                                    <button type="submit" class="btn-delete" type="submit">Delete</button>
                                                 </form>
                                             </div>';
                             }

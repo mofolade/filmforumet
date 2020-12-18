@@ -79,7 +79,7 @@
               <div class="content">
                 <div class="login-container">
                     <div class="">
-                        <h2 style="text-align:center">Registration</h2>
+                        <h2 style="text-align:center">Sign Up</h2>
                         <div class="login-col">
                         <div class="alert" id="errorMsg">
                             <span class="closebtn" onClick="closeAlert()">×</span>
@@ -103,7 +103,7 @@
                         if($errName){
                             echo '<small  class="text-danger">'.$errName.'</small>';
                         }
-                        echo '<label>Lösenord</label>';
+                        echo '<label>Password</label>';
                         echo '<input id="password"
                                 name="newUser[password]"
                                 required="" 
@@ -124,7 +124,7 @@
                         echo '">
                             <input type="hidden" id="roleId" name="newUser[roleId]" value="3">
                             <button data-test-submit-button="" data-bid-submit-button="" class="bid-btn btn btn-lg btn-fluid mb-4 " type="submit"> 
-                            Skapa nytt konto
+                                SIGN UP
                             </button>
                                     <div class="ml-4 pt-2 text-danger"></div>
                                 </div>

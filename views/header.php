@@ -16,15 +16,15 @@
     echo '<nav class="navbar">';
     echo '<a href="./">Filmforumet</a>';     
     echo '<div id="navbar-r">';
-    echo '<a href="./about.php">Om oss</a>';
+    echo '<a href="./about.php">About</a>';
     if(in_array(1,$currentUserRoles)){
         echo '<a href="./admin.php">Admin</a>';
 
     }
     if (empty($_SESSION["user_id"]))
     {
-        echo '<a href="./signIn.php">Bli medlem</a>';             
-        echo '<a href="./login.php" id="sign-in-link">Logga in</a>';
+        echo '<a href="./signIn.php">Sign up</a>';             
+        echo '<a href="./login.php" id="sign-in-link">Login</a>';
     }    
     else
     {
@@ -38,7 +38,7 @@
                 </div>
                 </a>
             </div>                
-            <a href="./logout.php">Logga ut</a>';
+            <a href="./logout.php">Logout</a>';
     }   
         echo ' </div>
         </nav>
