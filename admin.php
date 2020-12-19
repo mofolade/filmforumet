@@ -15,6 +15,7 @@
     $usersRoles=[];
     $currentUser=null;
     $allUsers=[];
+    $oneUser=[];
 
     if (!empty($_SESSION["user_id"])) {
         include_once 'src/DB/UserXRoleClass.php';
@@ -77,9 +78,10 @@
                                     <thead>
                                         <tr>
                                         <th></th>
+                                        <th>User id</th>
+                                        <th>Role</th>
                                         <th>Username</th>
                                         <th>Email</th>
-                                        <th>Role</th>
                                         <th>IsActive</th>
                                         <th>Inactivation</th>
                                         <th>Edit roles</th>
@@ -90,19 +92,18 @@
                                     //if (!empty($_SESSION["user_id"])) {
                                     //    if($currentUser['isAdmin'] == 1){
                                             $tableRow = 0;
-                                            foreach($allUsers as $user) {
+                                            foreach($allUsers as $oneUser) {
                                                 $isAdmin=false;
                                                 $isModerator=false;
                                                 $tableRow=$tableRow+1;
                                                 echo '<tr class="datatr">
                                                     <td>'.$tableRow.'</td>
-                                                    <td id="'.$user['id'].'">'.$user['name'].'</td>
-                                                    <td>'.$user['email'].'</td>';
+                                                    <td>'.$oneUser['id'].'</td>';
                                                 //Roles
                                                 echo '    <td>';
                                                 if (isset($usersRoles)) {                                                    
                                                     foreach ($usersRoles as $subarray) {
-                                                        if($subarray['user_id'] == $user['id']){
+                                                        if($subarray['user_id'] == $oneUser['id']){
                                                             echo '      <span  class="badge  ';
                                                             if($subarray['role_name'] == 'admin'){
                                                                 echo ' text-white  bg-warning " ';
@@ -131,13 +132,21 @@
                                                 
                                                 echo '        </td>
                                                     <td>';
+                                                if($isModerator==true){
+                                                    echo '<a href="./moderator.php?id='.$oneUser['id'].'">';
+                                                    echo $oneUser['name'];
+                                                    echo '</a>';
+                                                }
+                                                echo '</td>
+                                                    <td>'.$oneUser['email'].'</td>';
+                                                echo '    <td>';
                                                 echo '      <span  class="badge  ';
-                                                    if($user['is_active'] == 1){
+                                                    if($oneUser['is_active'] == 1){
                                                         echo ' text-white  bg-success " ';
                                                         echo '" >';
                                                         echo 'active';
                                                     }
-                                                    else if($user['is_active'] == 0){
+                                                    else if($oneUser['is_active'] == 0){
                                                         echo ' text-white  bg-warning " ';
                                                         echo '" >';
                                                         echo 'inaktiv';
@@ -149,8 +158,8 @@
                                                 echo '</td>
                                                     <td>
                                                         <div class="btn-group btn-group-sm" role="group">';
-                                                    if($user['is_active'] == 1){
-                                                        echo '  <button class="btn btn-danger" data-toggle="modal" data-target="#modalAdminUser" onClick="modalAdminUser('.$user['id'].')"))>
+                                                    if($oneUser['is_active'] == 1){
+                                                        echo '  <button class="btn btn-danger" data-toggle="modal" data-target="#modalAdminUser" onClick="modalAdminUser('.$oneUser['id'].')"))>
                                                                     <i class="fa fa-trash visible"></i>
                                                                 </button>';
                                                     }
@@ -160,14 +169,14 @@
                                                     if ($isAdmin==false) { 
                                                         echo '<span style="margin-right:5px;"><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
                                                                 <input type="hidden" id="roleId" name="roleId" value="1">
-                                                                <input type="hidden" id="userId" name="userId" value="'.$user['id'].'">
+                                                                <input type="hidden" id="userId" name="userId" value="'.$oneUser['id'].'">
                                                                 <input type="hidden" id="method" name="method" value="addRole">
                                                                 <button type="submit" class="btn btn-warning btn-sm" ><i class="fa fa-plus visible"> Admin</i></button>
                                                             </form></span>';
                                                     }else{
                                                         echo '<span style="margin-right:5px;"><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
                                                                 <input type="hidden" id="roleId" name="roleId" value="1">
-                                                                <input type="hidden" id="userId" name="userId" value="'.$user['id'].'">
+                                                                <input type="hidden" id="userId" name="userId" value="'.$oneUser['id'].'">
                                                                 <input type="hidden" id="method" name="method" value="deleteRole">
                                                                 <button type="submit" class="btn btn-danger btn-sm" ><i class="fa fa-minus visible"> Admin</i></button>
                                                             </form></span>';
@@ -175,14 +184,14 @@
                                                     if ($isModerator==false) { 
                                                         echo '<span><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
                                                                 <input type="hidden" id="roleId" name="roleId" value="2">
-                                                                <input type="hidden" id="userId" name="userId" value="'.$user['id'].'">
+                                                                <input type="hidden" id="userId" name="userId" value="'.$oneUser['id'].'">
                                                                 <input type="hidden" id="method" name="method" value="addRole">
                                                                 <button type="submit" class="btn btn-success btn-sm" ><i class="fa fa-plus visible"> Moderator</i></button>
                                                             </form></span>';
                                                     }else{
                                                         echo '<span style="margin-right:5px;"><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
                                                                 <input type="hidden" id="roleId" name="roleId" value="2">
-                                                                <input type="hidden" id="userId" name="userId" value="'.$user['id'].'">
+                                                                <input type="hidden" id="userId" name="userId" value="'.$oneUser['id'].'">
                                                                 <input type="hidden" id="method" name="method" value="deleteRole">
                                                                 <button type="submit" class="btn btn-danger btn-sm" ><i class="fa fa-minus visible"> Moderator</i></button>
                                                             </form></span>';

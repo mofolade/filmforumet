@@ -763,3 +763,17 @@ input[id^="spoiler"]:checked + label + .spoiler{
     width: 0;
     height: 0;
 }
+
+.results tr[visible='false'],
+.no-result{
+  display:none;
+}
+
+.results tr[visible='true']{
+  display:table-row;
+}
+
+.counter{
+  padding:8px; 
+  color:#ccc;
+}
