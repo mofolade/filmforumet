@@ -5,6 +5,7 @@
 <html lang="en">
     <?php
         $currentUserRoles=[];
+        $moderatorTopicRights=[];
         $adminRoleId=0;
         $moderatorRoleId=0;
 
@@ -25,6 +26,9 @@
                 $adminRoleId=1;
             } else if(in_array(2,$currentUserRoles)){
                 $moderatorRoleId=2;
+                include_once './src/DB/ModeratorXTopicClass.php';
+                $moderatorTopicRights = new ModeratorXTopicClass();
+                $moderatorRights = $moderatorTopicRights->getModeratorTopicsRights($_SESSION["user_id"]);
             }
 
             include_once 'src/ACLSettingsClass.php';
@@ -104,7 +108,11 @@
                                             <i class="fa fa-plus visible"></i> New comment
                                             </button>
                                         </h2>';
-                                echo'   <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                echo'   <div id="collapseOne" class="accordion-collapse collapse ';
+                                if(isset($_GET['commentId'])){
+                                    echo 'show';
+                                }
+                                echo '" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
                                                 <div class="comment-card">
                                                     <div class="comment-item-container">
@@ -115,18 +123,30 @@
                                                                 </div>
                                                             </a>
                                                             <span class="">'.$currentUser['name'].'</span>
-                                                        </div>';
-                                echo'                   <div class="comment-box">
+                                                        </div>
+                                                        <div class="comment-box">
                                                             <div style="height: 80%;">
                                                                 <form action="'.$_SERVER['REQUEST_URI'].'" method="post" enctype="multipart/form-data">
                                                                     <textarea name="newComment[description]"  id="description" required="required"></textarea>
                                                                     <input type="hidden" name="newComment[topicId]" value="'.$_GET['id'].'">
                                                                     <input type="hidden" name="newComment[userId]" value="'.$currentUser['user_id'].'">
-                                                                    <input type="submit" class="btn-edit" value="Send" style="margin-bottom: 5px">
+                                                                    <input type="hidden" name="newComment[commentId]" value="';
+                                                                    if(isset($_GET['commentId'])){
+                                                                        echo $_GET['commentId'];
+                                                                    }
+                                                                    echo '">';
+                                                        if(in_array(1,$currentUserRoles) || in_array(2,$currentUserRoles)){
+                                                            echo '<div><input class="form-check-input special-checkbox" type="checkbox" name="newComment[isSpecial]" value="1" id="specialChecked" checked>
+                                                                    <label class="form-check-label" for="specialChecked">
+                                                                    Special
+                                                                    </label></div>';
+                                                        }
+                                                        
+                                                        echo'   <input type="submit" class="btn-edit" value="Send" style="margin-bottom: 5px">
                                                                 </form>
                                                             </div>                                 
-                                                        </div>';
-                                echo'               </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>';
@@ -136,20 +156,26 @@
                         }                        
                         echo '<div  id="comments-cover">';
                         foreach ($allComments as $comment){
-                            echo '<div class="comment-card" style="height: 150px;">
-                                <div class="comment-item-container">
-                                    <div class="user-profil-box">
-                                        <a href="./profil?id='.$comment['user_id'].'" >
-                                            <div class="comment-avatar">
-                                                <img src=".'.$comment['picture_url'].'" title="'.$comment['name'].'">
-                                            </div>
-                                        </a>';
-                            echo    '<span class="">'.$comment['name'].'</span>';
-                            echo '  </div>
+                            $specialClass='';
+                            if($comment['isSpecial'] == 1){
+                                $specialClass='special';
+                            }
+                            echo '<div class="comment-card" style="min-height: 150px;">
+                                    <div class="comment-item-container '.$specialClass.'">
+                                        <div class="user-profil-box">
+                                            <a href="./profil?id='.$comment['user_id'].'" >
+                                                <div class="comment-avatar">
+                                                    <img src=".'.$comment['picture_url'].'" title="'.$comment['name'].'">
+                                                </div>
+                                            </a>
+                                            <span class="">'.$comment['name'].'</span>
+                                        </div>
                                     <div class="comment-box">';
-                            if(in_array(1,$currentUserRoles) || in_array(2,$currentUserRoles)){
+                            if(in_array(1,$currentUserRoles) 
+                            || (in_array(2,$currentUserRoles) && in_array($_GET['id'],$moderatorRights))
+                            ){
                                 //admin or moderator
-                                    echo'            <div class="edit-links">';
+                                echo'<div class="edit-links">';
                                         if($comment['isSpoiler'] == 0){
                                             echo ' <form method="post" action="'.$_SERVER['REQUEST_URI'].'">
                                                     <input type="hidden" id="commentId" name="commentId" value="'.$comment['id'].'">
@@ -162,23 +188,36 @@
                                                     <input type="hidden" name="method" value="setInactiveComment">
                                                     <button type="submit" class="btn-delete" type="submit">Delete</button>
                                                 </form>
-                                            </div>';
+                                            </div>'; //edit-links
                             }
-                            echo '          <div class="comment-body">';
-                            if($comment['isSpoiler'] == 1){
-                                echo '<input type="checkbox"  id="spoiler'.$comment['id'].'" /> 
-                                    <label for="spoiler'.$comment['id'].'" >Spoiler</label>
-                                        <div class="spoiler">';
+                            echo '  <div class="comment-body">';
+                                            if($comment['isSpoiler'] == 1){
+                                                echo '<input type="checkbox"  id="spoiler'.$comment['id'].'" /> 
+                                                        <label for="spoiler'.$comment['id'].'" >Spoiler</label>
+                                                        <div class="spoiler">';
+                                            }
+                                            echo $comment['comment'];
+                                            if($comment['isSpoiler'] == 1){
+                                                echo '  </div>';
+                                            }
+                                            
+                            echo '  </div> '; //comment-body
+                            if($comment['antecedent_comment_id'] > 0){
+                                echo '<input type="checkbox"  id="antecedent'.$comment['antecedent_comment_id'].'" /> 
+                                        <label for="antecedent'.$comment['antecedent_comment_id'].'" >Antecedent</label>
+                                        <div class="antecedent">';
                             }
-                            echo $comment['comment'];
-                            if($comment['isSpoiler'] == 1){
-                                echo '</div>';
+                            echo $comment['antecedent'];
+                            if($comment['antecedent_comment_id'] > 0){
+                                echo '  </div>';
                             }
-                            echo ' </div>
-                                        <div><label>'.$comment['created'].'</label></div>                                         
+                            echo '  <div>
+                                        <label>'.$comment['created'].'</label>
+                                        <label><a href="./topic.php?id='.$_GET['id'].'&commentId='.$comment['id'].'">Reply</a></label>                                   
                                     </div>
                                 </div>
-                            </div>';
+                            </div>
+                        </div>';
                         }
                         echo '</div>';
                     }

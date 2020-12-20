@@ -12,6 +12,7 @@ class TopicCommentClass extends MySQL{
         $comment='';
         $user_id=0;
         $created='';
+        $antecedent_comment_id=0;
         $isSpecial=0;
         $isSpoiler=0;
         $picture_url='';
@@ -19,9 +20,22 @@ class TopicCommentClass extends MySQL{
         $name='';
         $getComment=[];
         $comments=[];
+        $antecedent='';
 
         if($topicId > 0){
-            $stmt = $this->connection -> prepare('SELECT DISTINCT t.id,t.comment,t.user_id,t.created,t.isSpecial,t.isSpoiler,u.name,u.picture_url
+            $stmt = $this->connection -> prepare('SELECT DISTINCT t.id,
+                                                                  t.comment,
+                                                                  t.antecedent_comment_id,
+                                                                  t.user_id,
+                                                                  t.created,
+                                                                  t.isSpecial,
+                                                                  t.isSpoiler,
+                                                                  u.name,
+                                                                  u.picture_url,
+                                                                  (SELECT tc.comment
+                                                                     FROM topic_comments tc
+                                                                    WHERE tc.id = t.antecedent_comment_id
+                                                                    Limit 1) as antecedent
                                                     FROM topic_comments t,
                                                          users u
                                                     WHERE t.user_id = u.id
@@ -31,16 +45,18 @@ class TopicCommentClass extends MySQL{
             $stmt -> bind_param('i', $topicId);
             $stmt -> execute();
             $stmt -> store_result();
-            $stmt -> bind_result($id,$comment,$user_id,$created,$isSpecial,$isSpoiler,$name,$picture_url);
+            $stmt -> bind_result($id,$comment,$antecedent_comment_id,$user_id,$created,$isSpecial,$isSpoiler,$name,$picture_url,$antecedent);
             while ($stmt->fetch()) {
-                $getComment = array("id"            => $id,
-                                    "comment"       => $comment,
-                                    "user_id"       => $user_id,
-                                    "created"       => $created,
-                                    "isSpecial"     => $isSpecial,
-                                    "isSpoiler"     => $isSpoiler,
-                                    "name"          => $name,
-                                    "picture_url"   => $picture_url);
+                $getComment = array("id"                    => $id,
+                                    "comment"               => $comment,
+                                    "antecedent_comment_id" => $antecedent_comment_id,
+                                    "user_id"               => $user_id,
+                                    "created"               => $created,
+                                    "isSpecial"             => $isSpecial,
+                                    "isSpoiler"             => $isSpoiler,
+                                    "name"                  => $name,
+                                    "picture_url"           => $picture_url,
+                                    "antecedent"            => $antecedent);
                 array_push($comments, $getComment);
             }
             $stmt->close();
@@ -71,9 +87,18 @@ class TopicCommentClass extends MySQL{
         $now = new DateTime();
         $currentDate = $now->format('Y-m-d H:i:s');
         $newCommentId=0;
+        $isSpecial = 0;
 
-        $stmtInsert = $this->connection -> prepare('INSERT INTO topic_comments(comment,topic_id,user_id,created) VALUES(?,?,?,?)');
-        $stmtInsert -> bind_param('siis', $newComment['description'], $newComment['topicId'], $newComment['userId'], $currentDate);
+        if(isset($newComment['isSpecial'])){
+            $isSpecial = 1;
+        }
+        else{
+            $isSpecial = 0;
+        }
+
+        $stmtInsert = $this->connection -> prepare('INSERT INTO topic_comments(comment,topic_id,user_id,antecedent_comment_id,isSpecial,created) 
+                                                    VALUES(?,?,?,?,?,?)');
+        $stmtInsert -> bind_param('siiiis', $newComment['description'], $newComment['topicId'], $newComment['userId'], $newComment['commentId'], $isSpecial, $currentDate);
         if($stmtInsert -> execute()){
             $newCommentId = mysqli_insert_id($this->connection);
             $stmtInsert->close();

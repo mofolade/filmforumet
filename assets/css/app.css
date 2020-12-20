@@ -457,7 +457,14 @@ label {
     transform: translateY(-20%);
     transition: all 200ms ease;
 }
-  
+.special-checkbox{
+    margin: 0px 10px;
+}
+.special{
+    background-color: #338033;
+    color:#fff;
+}
+/*
 [type="checkbox"] {
     display: none;
 }
@@ -497,7 +504,7 @@ label {
     font-size: 11px;
     text-align: center;
     margin: 0.6rem;
-}
+}*/
   
 .remove-card, .primary-card {
     flex-grow: 2;
@@ -613,7 +620,9 @@ textarea {
 .comment-item-container{
     display: flex;
     flex-direction: row;
-    height: 100%;
+    align-items: stretch;
+    width: 100%;
+    border-radius: 5px;
 }
 .comment-item-container h3{
     font-size: 14px;
@@ -626,12 +635,15 @@ textarea {
     margin: 15px;
     width: 90%;
     background-color: #fcfcfc;
+    display: flex;
+    height: 100%;
 }
 .comment-card-container {
     display: flex;
     flex-direction: row;
     width: 90%;
     padding: 0 16px;
+    align-items: stretch;
 }
 .comment-card-container h2{
     opacity: 0.6;
@@ -683,16 +695,15 @@ textarea {
    object-fit: contain;
    margin-right: 10px;
 }
-input[id^="spoiler"]{
+input[id^="spoiler"],input[id^="antecedent"]{
     display: none;
 }
-input[id^="spoiler"] + label {
+input[id^="spoiler"] + label,input[id^="antecedent"] + label {
     display: block;
     width: 80px;
     height: 30px;
     /*margin: 0 auto;*/
-    padding: 5px 20px;
-    background: #ba5f81;
+    padding: 5px 10px;
     color: #fff;
     text-align: center;
     /*font-size: 24px;*/
@@ -700,11 +711,20 @@ input[id^="spoiler"] + label {
     cursor: pointer;
     transition: all .6s;
 }
-input[id^="spoiler"]:checked + label {
+
+input[id^="spoiler"] + label{
+    background: #ba5f81;
+}
+
+input[id^="antecedent"] + label{
+    background: #999ee7;
+}
+
+input[id^="spoiler"]:checked + label,input[id^="antecedent"]:checked + label {
     color: #333;
     background: #ccc;
 }
-input[id^="spoiler"] ~ .spoiler {
+input[id^="spoiler"] ~ .spoiler,input[id^="antecedent"] ~ .antecedent {
     width: 90%;
     height: 0;
     overflow: hidden;
@@ -718,6 +738,11 @@ input[id^="spoiler"] ~ .spoiler {
 }
 input[id^="spoiler"]:checked + label + .spoiler{
     height: auto;
+    opacity: 1;
+    padding: 10px;
+}
+input[id^="antecedent"]:checked + label + .antecedent{
+    height: 100%;
     opacity: 1;
     padding: 10px;
 }
