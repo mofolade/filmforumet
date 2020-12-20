@@ -9,8 +9,14 @@
 
     include_once 'src/DB/UserClass.php';
     $user = new UserClass();
+    
+    include_once 'src/ACLSettingsClass.php';
+    $ACLSettings = new ACLSettingsClass();
+
     $errorMessage = '';
     $message = '';
+    $adminRoleId=0;
+    $moderatorRoleId=0;
     $currentUserRoles=[];
     $usersRoles=[];
     $currentUser=null;
@@ -23,18 +29,29 @@
         include_once 'src/DB/UserXRoleClass.php';
         $userRole = new UserXRoleClass();
 
-        $currentUser = $user->getUser($_SESSION["user_id"]);
-        $currentUser = json_decode($currentUser, true);
         
+        $currentUser = $user->getUser($_SESSION["user_id"]);
+        $currentUser = json_decode($currentUser, true);        
         $currentUserRoles = $userRole->getUserRole($_SESSION["user_id"]);
 
-        if(isset($_GET['id'])){
-            $moderatorUser = $user->getUser($_GET['id']);
+        if(in_array(1,$currentUserRoles)){
+            $adminRoleId=1;
+        } else if(in_array(2,$currentUserRoles)){
+            $moderatorRoleId=2;
+        }
+
+        if($ACLSettings->moderator('GET', $adminRoleId) == true  || $ACLSettings->moderator('GET', $moderatorRoleId) == true){
+            if(isset($_GET['id'])){
+                $moderatorUser = $user->getUser($_GET['id']);
+            }
+            elseif(in_array(2,$currentUserRoles)){
+                $moderatorUser = $user->getUser($_SESSION["user_id"]);
+            }
             $moderatorUser = json_decode($moderatorUser, true);
 
             $moderatorUserRoles = $userRole->getUserRole($_GET['id']);
 
-            if(in_array(1,$currentUserRoles)){
+            if(in_array(1,$currentUserRoles) || in_array(2,$currentUserRoles)){
                 include_once 'src/DB/TopicClass.php';
                 $topic = new TopicClass();    
                 $allTopics = $topic->getAllTopics();
@@ -44,19 +61,20 @@
 
                 $moderatorTopicRights = $moderatorRight->getModeratorTopicsRights($_GET['id']);
 
-                if(isset($_POST['topicId']) && ($_POST['method'] == 'addRight')){
+                if(isset($_POST['topicId'])
+                    && ($_POST['action'] == 'addRight')
+                    && ($ACLSettings->moderator('POST', $adminRoleId) == true) ){
                     $resp = $moderatorRight -> addModeratorTopicRight($_GET['id'], $_POST['topicId']);
                     echo "<script>window.location.href='./moderator.php?id=".$_GET['id']."';</script>";
                     exit;
-                }else if(isset($_POST['topicId']) && ($_POST['method'] == 'deleteRight')){
+                }else if(isset($_POST['topicId']) 
+                    && ($_POST['action'] == 'deleteRight')
+                    && ($ACLSettings->moderator('POST', $adminRoleId) == true)){
                     $resp = $moderatorRight -> deleteModeratorTopicRight($_GET['id'], $_POST['topicId']);
                     echo "<script>window.location.href='./moderator.php?id=".$_GET['id']."';</script>";
                     exit;
-                }
-
-                
-            }
-            
+                }                
+            }            
         }
     }
 
@@ -72,7 +90,9 @@
                     <?php
                         //moderator name
                         if(isset($_GET['id'])){
+                            echo '<div class="topic-info-box">';
                             echo '<h2>'.$moderatorUser['name'].'</h2>';
+                            echo '</div>';
                         }
                     ?>
                     <div class="d-flex flex-grow-1 h-100">
@@ -112,57 +132,57 @@
                                     <tbody id="tbody">
                                 <?php                                      
                                     //if (!empty($_SESSION["user_id"])) {
-                                    //    if($currentUser['isAdmin'] == 1){
-                                            $tableRow = 0;
-                                            foreach($allTopics as $topic) {
-                                                $isAdmin=false;
-                                                $isModerator=false;
-                                                $tableRow=$tableRow+1;
-                                                echo '<tr class="datatr">
-                                                    <th scope="row">'.$tableRow.'</th>
-                                                    <th><img class="comment-img" src="'.$topic['image_path'].'"></th>
-                                                    <th>'.$topic['name'].'</th>
-                                                    <th>'.$topic['imdb_id'].'</th>';
-                                                echo '        </td>
-                                                    <th>';
-                                                /*echo '      <span  class="badge  ';
-                                                    if($user['is_active'] == 1){
-                                                        echo ' text-white  bg-success " ';
-                                                        echo '" >';
-                                                        echo 'active';
+                                    if(in_array(1,$currentUserRoles) || in_array(2,$currentUserRoles)){
+                                        $tableRow = 0;
+                                        foreach($allTopics as $topic) {
+                                            $isAdmin=false;
+                                            $isModerator=false;
+                                            $tableRow=$tableRow+1;
+                                            echo '<tr class="datatr">
+                                                <th scope="row">'.$tableRow.'</th>
+                                                <th><img class="comment-img" src="'.$topic['image_path'].'"></th>
+                                                <th><a href="./topic.php?id='.$topic['id'].'">'.$topic['name'].'</a></th>
+                                                <th>'.$topic['imdb_id'].'</th>';
+                                            echo '        </td>
+                                                <th>';
+                                            /*echo '      <span  class="badge  ';
+                                                if($user['is_active'] == 1){
+                                                    echo ' text-white  bg-success " ';
+                                                    echo '" >';
+                                                    echo 'active';
+                                                }
+                                                else if($user['is_active'] == 0){
+                                                    echo ' text-white  bg-warning " ';
+                                                    echo '" >';
+                                                    echo 'inaktiv';
+                                                }
+                                                else{
+                                                    echo '" >';
+                                                }        
+                                            echo '      </span>';*/
+                                            echo '</th>
+                                                <th>
+                                                    <div class="btn-group btn-group-sm" role="group">';
+                                                if(isset($_GET['id']) && in_array(1,$currentUserRoles)){
+                                                    if ($isAdmin==false && !in_array($topic['id'],$moderatorTopicRights)) { 
+                                                        echo '<span style="margin-right:5px;"><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
+                                                                <input type="hidden" id="topicId" name="topicId" value="'.$topic['id'].'">
+                                                                <input type="hidden" id="action" name="action" value="addRight">
+                                                                <button type="submit" class="btn-primary btn-sm" ><i class="fa fa-plus visible"> Moderator</i></button>
+                                                            </form></span>';
+                                                    }else{
+                                                        echo '<span style="margin-right:5px;"><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
+                                                                <input type="hidden" id="topicId" name="topicId" value="'.$topic['id'].'">
+                                                                <input type="hidden" id="action" name="action" value="deleteRight">
+                                                                <button type="submit" class="btn-danger btn-sm" ><i class="fa fa-minus visible"> Moderator</i></button>
+                                                            </form></span>';
                                                     }
-                                                    else if($user['is_active'] == 0){
-                                                        echo ' text-white  bg-warning " ';
-                                                        echo '" >';
-                                                        echo 'inaktiv';
-                                                    }
-                                                    else{
-                                                        echo '" >';
-                                                    }        
-                                                echo '      </span>';*/
-                                                echo '</th>
-                                                    <th>
-                                                        <div class="btn-group btn-group-sm" role="group">';
-                                                    if(isset($_GET['id']) && in_array(1,$currentUserRoles)){
-                                                        if ($isAdmin==false && !in_array($topic['id'],$moderatorTopicRights)) { 
-                                                            echo '<span style="margin-right:5px;"><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
-                                                                    <input type="hidden" id="topicId" name="topicId" value="'.$topic['id'].'">
-                                                                    <input type="hidden" id="method" name="method" value="addRight">
-                                                                    <button type="submit" class="btn btn-primary btn-sm" ><i class="fa fa-plus visible"> Moderator</i></button>
-                                                                </form></span>';
-                                                        }else{
-                                                            echo '<span style="margin-right:5px;"><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
-                                                                    <input type="hidden" id="topicId" name="topicId" value="'.$topic['id'].'">
-                                                                    <input type="hidden" id="method" name="method" value="deleteRight">
-                                                                    <button type="submit" class="btn btn-danger btn-sm" ><i class="fa fa-minus visible"> Moderator</i></button>
-                                                                </form></span>';
-                                                        }
-                                                    }
-                                                    echo '</div>
-                                                    </th>
-                                                </tr>';
-                                            }
-                                    //    }
+                                                }
+                                                echo '</div>
+                                                </th>
+                                            </tr>';
+                                        }
+                                    }
                                     //}
                                 ?>
                                     </tbody>

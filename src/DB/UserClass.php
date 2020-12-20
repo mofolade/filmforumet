@@ -37,7 +37,7 @@ class UserClass extends MySQL{
                                                      u.picture_url
                                                FROM users u
                                               WHERE u.id = ?
-                                                AND u.is_active = 1 LIMIT 1');
+                                              LIMIT 1');
         $stmt -> bind_param('i', $userID);
         $stmt -> execute();
         $stmt -> store_result();
@@ -55,7 +55,7 @@ class UserClass extends MySQL{
     public function addUser($newUser){
         $userId=0;
         $adminErrMsg=0;
-        $stmt = $this->connection -> prepare('SELECT id FROM users WHERE name = ? AND is_active = 1 LIMIT 1');
+        $stmt = $this->connection -> prepare('SELECT id FROM users WHERE name = ? LIMIT 1');
         $stmt -> bind_param('s', $newUser['username']);
         $stmt -> execute();
         $stmt -> store_result();
@@ -67,7 +67,7 @@ class UserClass extends MySQL{
         }
         else{
 
-            $stmt = $this->connection -> prepare('SELECT id FROM users WHERE email = ? AND is_active = 1 LIMIT 1');
+            $stmt = $this->connection -> prepare('SELECT id FROM users WHERE email = ? LIMIT 1');
             $stmt -> bind_param('s', $newUser['email']);
             $stmt -> execute();
             $stmt -> store_result();

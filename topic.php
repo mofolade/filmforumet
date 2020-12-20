@@ -5,6 +5,9 @@
 <html lang="en">
     <?php
         $currentUserRoles=[];
+        $adminRoleId=0;
+        $moderatorRoleId=0;
+
         $page_title = "Filmforumet - Topic";
         include_once 'views/head.php'; 
 
@@ -17,15 +20,25 @@
             include_once 'src/DB/UserXRoleClass.php';
             $userRole = new UserXRoleClass();
             $currentUserRoles = $userRole->getUserRole($_SESSION["user_id"]);
+
+            if(in_array(1,$currentUserRoles)){
+                $adminRoleId=1;
+            } else if(in_array(2,$currentUserRoles)){
+                $moderatorRoleId=2;
+            }
+
+            include_once 'src/ACLSettingsClass.php';
+            $ACLSettings = new ACLSettingsClass();
         }
 
         include_once 'src/DB/TopicCommentClass.php';
         $topicComment = new TopicCommentClass();    
 
-        if(isset($_GET['id'])){
-            $topicId = $_GET['id'];
-            include_once 'src/DB/TopicClass.php';
-            $topic = new TopicClass();        
+        include_once 'src/DB/TopicClass.php';
+        $topic = new TopicClass();
+
+        if(isset($_GET['id']) && $ACLSettings->comments('GET') == true){
+            $topicId = $_GET['id'];     
             $getTopic = $topic->getTopic($topicId);
             $getTopic = json_decode($getTopic, true);
                     
@@ -33,20 +46,28 @@
     
         }
 
-        if(isset($_POST['newComment'])) {
+        if(isset($_POST['newComment']) && $ACLSettings->comments('POST') == true) {
             $newComment = $_POST['newComment'];
             $newCommentResp = $topicComment->addComment($newComment);
             echo "<script>window.location.href='./topic.php?id=".$_GET['id']."';</script>";
             exit;
         }
 
-        if(isset($_POST['method'])) {
+        if(isset($_POST['method']) && $ACLSettings->comments('POST') == true) {
             if($_POST['method'] == 'setSpoiler'){
                 $newCommentResp = $topicComment->setSpoilerComment($_POST['commentId']);
             }
             elseif($_POST['method'] == 'setInactiveComment'){
                 $newCommentResp = $topicComment->setInactiveComment($_POST['commentId']);
             }
+            echo "<script>window.location.href='./topic.php?id=".$_GET['id']."';</script>";
+            exit;
+        }
+
+        if(isset($_POST['closure'])
+            && $_POST['closure'] == 1
+            && ($ACLSettings->topics('DELETE', $adminRoleId) == true || $ACLSettings->topics('DELETE', $moderatorRoleId) == true)) {
+            $resp = $topic->closureTopic($_GET['id']);
             echo "<script>window.location.href='./topic.php?id=".$_GET['id']."';</script>";
             exit;
         }
@@ -70,13 +91,20 @@
                             </div>';
                         if(!empty($_SESSION["user_id"])){
                             echo '<div class="accordion" id="accordionExample">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        <i class="fa fa-plus visible"></i> New comment
-                                        </button>
-                                        </h2>
-                                        <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                    <div class="accordion-item">';
+                            if(in_array(1,$currentUserRoles) || in_array(2,$currentUserRoles)){
+                                echo '      <form action="'.$_SERVER['REQUEST_URI'].'" method="post" enctype="multipart/form-data">';
+                                echo '          <input type="hidden" name="closure" value="1">';
+                                echo '          <input type="submit" class="btn-closure" value="Closure" style="margin-bottom: 5px">
+                                            </form>';
+                            }
+                            if($getTopic['is_open'] == 1){
+                                echo '  <h2 class="accordion-header" id="headingOne">
+                                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            <i class="fa fa-plus visible"></i> New comment
+                                            </button>
+                                        </h2>';
+                                echo'   <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                             <div class="accordion-body">
                                                 <div class="comment-card">
                                                     <div class="comment-item-container">
@@ -87,8 +115,8 @@
                                                                 </div>
                                                             </a>
                                                             <span class="">'.$currentUser['name'].'</span>
-                                                        </div>
-                                                        <div class="comment-box">
+                                                        </div>';
+                                echo'                   <div class="comment-box">
                                                             <div style="height: 80%;">
                                                                 <form action="'.$_SERVER['REQUEST_URI'].'" method="post" enctype="multipart/form-data">
                                                                     <textarea name="newComment[description]"  id="description" required="required"></textarea>
@@ -97,12 +125,13 @@
                                                                     <input type="submit" class="btn-edit" value="Send" style="margin-bottom: 5px">
                                                                 </form>
                                                             </div>                                 
-                                                        </div>
-                                                    </div>
+                                                        </div>';
+                                echo'               </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
+                                        </div>';
+                            }
+                            echo'    </div>
                                 </div>';
                         }                        
                         echo '<div  id="comments-cover">';

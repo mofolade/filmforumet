@@ -6,8 +6,34 @@
     <?php
         $page_title = "Filmforumet - Ny Topic";
         include_once 'views/head.php'; 
+
+        include_once 'src/ACLSettingsClass.php';
+        $ACLSettings = new ACLSettingsClass();
+
+        $adminRoleId=0;
+        $currentUserRoles=[];
+        $currentUser=null;
+
+        if (!empty($_SESSION["user_id"])) {
+            include_once 'src/DB/UserClass.php';
+            $user = new UserClass();
     
-        if(isset($_POST['newTopic'])) {
+            $currentUser = $user->getUser($_SESSION["user_id"]);
+            $currentUser = json_decode($currentUser, true);
+            
+            include_once 'src/DB/UserXRoleClass.php';
+            $userRole = new UserXRoleClass();
+            
+            $currentUserRoles = $userRole->getUserRole($_SESSION["user_id"]);
+            if(in_array(1,$currentUserRoles)){
+                $adminRoleId=1;
+            }
+        }
+    
+        if(isset($_POST['newTopic']) 
+            && in_array(1,$currentUserRoles)
+            && $ACLSettings->topics('POST', $adminRoleId) == true
+            ) {
             $newTopic = $_POST['newTopic'];
             
             // Check if name has been entered

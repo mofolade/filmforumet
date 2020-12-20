@@ -8,29 +8,18 @@
     $page_title = "Filmforumet - Profile";
     include_once 'views/head.php'; 
 
+    include_once 'src/ACLSettingsClass.php';
+    $ACLSettings = new ACLSettingsClass();
 
-    include_once 'src/DB/AuthClass.php';
-    $auth = new AuthClass();
-
-    include_once 'src/DB/GeneralClass.php';
-    $general = new GeneralClass();
-    $disabled='';
-
-    /*if (!empty($_SESSION["user_id"])) {
-        $user = $auth->getUser($_SESSION["user_id"]);
-        $user = json_decode($user, true);
-        $disabled = 'disabled';
-    }*/
+    if (!empty($_SESSION["user_id"])){
+        echo "<script>window.location.href='./';</script>";
+        exit;
+    }
 
     $errorMessage='';
     $message='';
     $errPsw='';
     $errName='';
-
-    include_once 'src/DB/UserClass.php';
-
-    $newUser = array("username" => '', "password" => '' , "email" => '');
-      
     $username = '';
     $password = '';
     $errorMessage = '';
@@ -39,7 +28,7 @@
     $button='';
     $hideForm='';
 
-    if(isset($_POST['newUser'])) {
+    if(isset($_POST['newUser']) && $ACLSettings->users('POST') == true) {
         $newUser = $_POST['newUser'];
         // Check if name has been entered
         if(empty($newUser['username'])) {
@@ -49,6 +38,7 @@
             $errPsw= 'Please enter your password';
         }
       else{
+            include_once './src/DB/UserClass.php';
             $user = new UserClass();
             $newUserResp = $user->addUser($newUser);
 

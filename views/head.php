@@ -2,7 +2,7 @@
     <meta charset="utf-8" />
     <meta name="author" content="Aniko Magyar">
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/fc2cd77299.js" crossorigin="anonymous"></script>
+    <!script src="https://kit.fontawesome.com/fc2cd77299.js" crossorigin="anonymous"></!script>
     
     <link rel="stylesheet" id="mec-google-fonts-css" href="//fonts.googleapis.com/css?family=Montserrat%3A400%2C700%7CRoboto%3A100%2C300%2C400%2C700&amp;ver=5.1.4" type="text/css" media="all">
     <link rel="stylesheet" href="./assets/css/app.css" type="text/css" >
@@ -14,10 +14,10 @@
 
     <link href="https://unpkg.com/bootstrap-table@1.18.1/dist/bootstrap-table.min.css" rel="stylesheet">
 
-    <script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></script>
+    <!--script src="https://unpkg.com/tableexport.jquery.plugin/tableExport.min.js"></!--script>
     <script src="https://unpkg.com/bootstrap-table@1.18.1/dist/bootstrap-table.min.js"></script>
     <script src="https://unpkg.com/bootstrap-table@1.18.1/dist/bootstrap-table-locale-all.min.js"></script>
-    <script src="https://unpkg.com/bootstrap-table@1.18.1/dist/extensions/export/bootstrap-table-export.min.js"></script>
+    <script-- src="https://unpkg.com/bootstrap-table@1.18.1/dist/extensions/export/bootstrap-table-export.min.js"></script-->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>

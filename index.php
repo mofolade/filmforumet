@@ -9,11 +9,18 @@
 
         include_once 'src/DB/TopicClass.php';
         $topic = new TopicClass();
-    
-        $allTopics = $topic->getAllTopics();
+
+        include_once 'src/ACLSettingsClass.php';
+        $ACLSettings = new ACLSettingsClass();    
+
+        if($ACLSettings->topics('GET', 0) == true){
+            $allTopics = $topic->getAllTopics(); 
+        }
 
         include_once 'src/DB/TopicCommentClass.php';
         $topicComment = new TopicCommentClass();
+        
+
     ?>
     <body>
         <div id="app">

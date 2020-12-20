@@ -1,39 +1,11 @@
 <?php
-require_once(dirname(__FILE__).'/classMySQL.php');
 
-class ACLsettingsClass extends MySQL{
+class ACLSettingsClass{
 
-    public function __construct(){
-        parent::__construct();
-    }
-    
-    
-    public function users($user, $method, $userRoles, $paramId) {
 
-    // Allow everyone to create a user if the userRole is user
-    if ($method === 'POST' && strpos($userRoles,'user')) { return true; }
-    // Allow admins to create a user with any role...
-    if ($method === 'POST' && strpos($userRoles,'admin')) { return true;}
-    // Allow admins to change info about a user
-    if ($method === 'PUT' && strpos($userRoles,'admin')) { return true; }
-    // Allow a user to change info about him/herself
-    // (the split pop thing is how we get the id from the url
-    // since we do not have req.params available in middleware)
-    if ($method === 'PUT' && $paramId === $user['id']) { return true; }
-    // Allow admins to delete users
-    if ($method === 'DELETE' && strpos($userRoles,'admin')) { return true; }
-    return false; // otherwise do not allow the request
-
-  }
-
-  public function userXRole($user, $method, $userRoles, $paramId) {
-    // Allow admins to a see a list of user roles
-    if ($method === 'GET' && strpos($userRoles,'admin')) { return true; }
-    // Allow admins to change info user roles
-    if ($method === 'PUT' && strpos($userRoles,'admin')) { return true; }
-    // Allow admins to delete role
-    if ($method === 'DELETE' && strpos($userRoles,'admin')) { return true; }
-    return false; // otherwise do not allow the request
+  public function users($method) {
+    // Allow everyone to create a user
+    if ($method === 'POST') { return true; }
   }
 
   public function login() { 
@@ -41,27 +13,38 @@ class ACLsettingsClass extends MySQL{
     return true;
   }
 
-  public function topics($user, $method, $userRoles, $paramId) {
-    // Allow admins to create a topic.
-    if ($method === 'POST' && strpos($userRoles,'admin')) { return true;}
-    // Allow all to a see a list of topic
-    if ($method === 'GET') { return true; }
-    // Allow admins to change info about a topic
-    if ($method === 'PUT' && strpos($userRoles,'admin')) { return true; }
-    // Allow admins to delete topic
-    if ($method === 'DELETE' && strpos($userRoles,'admin')) { return true; }
+  public function admin($method, $userRoleId) {
+    // Allow admins to edit roles.
+    if ($method === 'POST' && $userRoleId==1) { return true;}
     return false; // otherwise do not allow the request
   }
 
-  public function topicComments($user, $method, $userRoles, $paramId) {
-    // Allow user to create a comment.
-    if ($method === 'POST' && strpos($userRoles,'user')) { return true;}
-    // Allow all to a see a list of comment.
-    if ($method === 'GET') { return true; }
-    // Allow admins to delete topic
-    if ($method === 'DELETE' && (strpos($userRoles,'admin') || strpos($userRoles,'moderator'))) { return true; }
+  public function moderator($method, $userRoleId) {
+    // Allow admins and moderator to a see a list of topics and rights
+    if ($method === 'GET' && ($userRoleId==1 || $userRoleId==2)) { return true; }
+    // Allow admins to edit roles.
+    if ($method === 'POST' && $userRoleId==1) { return true;}
     return false; // otherwise do not allow the request
   }
+
+  public function topics($method, $userRoleId) {
+    // Allow admins to create a topic.
+    if ($method === 'POST' && $userRoleId==1) { return true;}
+    // Allow all to a see a list of topic
+    if ($method === 'GET') { return true; }
+    // Allow admins to delete topic
+    if ($method === 'DELETE' && ($userRoleId==1 || $userRoleId==2)) { return true; }
+    return false; // otherwise do not allow the request
+  }
+
+  public function comments($method) {
+    // Allow admins to create a topic.
+    if ($method === 'POST') { return true;}
+    // Allow all to a see a list of topic
+    if ($method === 'GET') { return true; }
+    return false; // otherwise do not allow the request
+  }
+
 }
 
 ?>

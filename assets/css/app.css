@@ -303,15 +303,18 @@ background-color: #dd4b39;
 color: white;
 }
 
+.sbm-success{
+    background-color: #4CAF50;    
+}
+
 /* style the submit button */
 input[type=submit] {
-background-color: #4CAF50;
-color: white;
-cursor: pointer;
+    color: white;
+    cursor: pointer;
 }
 
 input[type=submit]:hover {
-background-color: #45a049;
+    background-color: #45a049;
 }
 
 .login-container, .new-user-container {
