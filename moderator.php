@@ -126,7 +126,7 @@
                                         <th>Title</th>
                                         <th>Imdb Id</th>
                                         <th>Moderator rights</th>
-                                        <th>Inactivation</th>
+                                        <th>Edit right</th>
                                         </tr>
                                     </thead>
                                     <tbody id="tbody">
@@ -145,21 +145,21 @@
                                                 <th>'.$topic['imdb_id'].'</th>';
                                             echo '        </td>
                                                 <th>';
-                                            /*echo '      <span  class="badge  ';
-                                                if($user['is_active'] == 1){
+                                            echo '      <span  class="badge  ';
+                                                if(in_array($topic['id'],$moderatorTopicRights)){
                                                     echo ' text-white  bg-success " ';
                                                     echo '" >';
                                                     echo 'active';
                                                 }
-                                                else if($user['is_active'] == 0){
+                                                else if(!in_array($topic['id'],$moderatorTopicRights)){
                                                     echo ' text-white  bg-warning " ';
                                                     echo '" >';
-                                                    echo 'inaktiv';
+                                                    echo 'none';
                                                 }
                                                 else{
                                                     echo '" >';
                                                 }        
-                                            echo '      </span>';*/
+                                            echo '      </span>';
                                             echo '</th>
                                                 <th>
                                                     <div class="btn-group btn-group-sm" role="group">';

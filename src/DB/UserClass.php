@@ -30,24 +30,27 @@ class UserClass extends MySQL{
         $userName = '';
         $email = '';
         $picture_url = '';
+        $is_active = 0;
 
         $stmt = $this->connection -> prepare('SELECT u.id, 
                                                      u.name, 
                                                      u.email,
-                                                     u.picture_url
+                                                     u.picture_url,
+                                                     u.is_active
                                                FROM users u
                                               WHERE u.id = ?
                                               LIMIT 1');
         $stmt -> bind_param('i', $userID);
         $stmt -> execute();
         $stmt -> store_result();
-        $stmt -> bind_result($userId, $userName, $email, $picture_url);
+        $stmt -> bind_result($userId, $userName, $email, $picture_url,$is_active);
         $stmt -> fetch();
         
         return json_encode(["user_id"       => $userId,
                             "name"          => $userName,
                             "email"         => $email,
-                            "picture_url"   => $picture_url]);
+                            "picture_url"   => $picture_url,
+                            "is_active"     => $is_active]);
        
 
     }
