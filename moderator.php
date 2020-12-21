@@ -22,7 +22,7 @@
     $currentUser=null;
     $moderatorUser=null;
     $moderatorUserRoles=[];
-    $moderatorTopicRights=[];
+    $moderatorCategoriesRights=[];
     $allUsers=[];
 
     if (!empty($_SESSION["user_id"])) {
@@ -52,25 +52,25 @@
             $moderatorUserRoles = $userRole->getUserRole($_GET['id']);
 
             if(in_array(1,$currentUserRoles) || in_array(2,$currentUserRoles)){
-                include_once 'src/DB/TopicClass.php';
-                $topic = new TopicClass();    
-                $allTopics = $topic->getAllTopics();
+                include_once 'src/DB/CategoriesClass.php';
+                $category = new CategoriesClass();    
+                $allCategories = $category->getAllCategories();
 
-                include_once 'src/DB/ModeratorXTopicClass.php';
-                $moderatorRight = new ModeratorXTopicClass();
+                include_once 'src/DB/ModeratorXCategoryClass.php';
+                $moderatorRight = new ModeratorXCategoryClass();
 
-                $moderatorTopicRights = $moderatorRight->getModeratorTopicsRights($_GET['id']);
+                $moderatorCategoryRights = $moderatorRight->getModeratorCategoriesRights($_GET['id']);
 
-                if(isset($_POST['topicId'])
+                if(isset($_POST['categoryId'])
                     && ($_POST['action'] == 'addRight')
                     && ($ACLSettings->moderator('POST', $adminRoleId) == true) ){
-                    $resp = $moderatorRight -> addModeratorTopicRight($_GET['id'], $_POST['topicId']);
+                    $resp = $moderatorRight -> addModeratorCategoryRight($_GET['id'], $_POST['categoryId']);
                     echo "<script>window.location.href='./moderator.php?id=".$_GET['id']."';</script>";
                     exit;
-                }else if(isset($_POST['topicId']) 
+                }else if(isset($_POST['categoryId']) 
                     && ($_POST['action'] == 'deleteRight')
                     && ($ACLSettings->moderator('POST', $adminRoleId) == true)){
-                    $resp = $moderatorRight -> deleteModeratorTopicRight($_GET['id'], $_POST['topicId']);
+                    $resp = $moderatorRight -> deleteModeratorTopicRight($_GET['id'], $_POST['categoryId']);
                     echo "<script>window.location.href='./moderator.php?id=".$_GET['id']."';</script>";
                     exit;
                 }                
@@ -123,8 +123,7 @@
                                         <tr>
                                         <th></th>
                                         <th>Image</th>
-                                        <th>Title</th>
-                                        <th>Imdb Id</th>
+                                        <th>Name</th>
                                         <th>Moderator rights</th>
                                         <th>Edit right</th>
                                         </tr>
@@ -134,24 +133,23 @@
                                     //if (!empty($_SESSION["user_id"])) {
                                     if(in_array(1,$currentUserRoles) || in_array(2,$currentUserRoles)){
                                         $tableRow = 0;
-                                        foreach($allTopics as $topic) {
+                                        foreach($allCategories as $category) {
                                             $isAdmin=false;
                                             $isModerator=false;
                                             $tableRow=$tableRow+1;
                                             echo '<tr class="datatr">
                                                 <th scope="row">'.$tableRow.'</th>
-                                                <th><img class="comment-img" src="'.$topic['image_path'].'"></th>
-                                                <th><a href="./topic.php?id='.$topic['id'].'">'.$topic['name'].'</a></th>
-                                                <th>'.$topic['imdb_id'].'</th>';
+                                                <th><img class="comment-img" src="'.$category['image_path'].'"></th>
+                                                <th><a href="./category.php?id='.$category['id'].'">'.$category['name'].'</a></th>';
                                             echo '        </td>
                                                 <th>';
                                             echo '      <span  class="badge  ';
-                                                if(in_array($topic['id'],$moderatorTopicRights)){
+                                                if(in_array($category['id'],$moderatorCategoryRights)){
                                                     echo ' text-white  bg-success " ';
                                                     echo '" >';
                                                     echo 'active';
                                                 }
-                                                else if(!in_array($topic['id'],$moderatorTopicRights)){
+                                                else if(!in_array($category['id'],$moderatorCategoryRights)){
                                                     echo ' text-white  bg-warning " ';
                                                     echo '" >';
                                                     echo 'none';
@@ -164,15 +162,15 @@
                                                 <th>
                                                     <div class="btn-group btn-group-sm" role="group">';
                                                 if(isset($_GET['id']) && in_array(1,$currentUserRoles)){
-                                                    if ($isAdmin==false && !in_array($topic['id'],$moderatorTopicRights)) { 
+                                                    if ($isAdmin==false && !in_array($category['id'],$moderatorCategoryRights)) { 
                                                         echo '<span style="margin-right:5px;"><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
-                                                                <input type="hidden" id="topicId" name="topicId" value="'.$topic['id'].'">
+                                                                <input type="hidden" id="categoryId" name="categoryId" value="'.$category['id'].'">
                                                                 <input type="hidden" id="action" name="action" value="addRight">
                                                                 <button type="submit" class="btn-primary btn-sm" ><i class="fa fa-plus visible"> Moderator</i></button>
                                                             </form></span>';
                                                     }else{
                                                         echo '<span style="margin-right:5px;"><form action="'.$_SERVER['REQUEST_URI'].'" method="post">
-                                                                <input type="hidden" id="topicId" name="topicId" value="'.$topic['id'].'">
+                                                                <input type="hidden" id="categoryId" name="categoryId" value="'.$category['id'].'">
                                                                 <input type="hidden" id="action" name="action" value="deleteRight">
                                                                 <button type="submit" class="btn-danger btn-sm" ><i class="fa fa-minus visible"> Moderator</i></button>
                                                             </form></span>';

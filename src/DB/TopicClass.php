@@ -13,22 +13,55 @@ class TopicClass extends MySQL{
         return $result;
     }
 
+    public function getAllTopicsByCategoryId($categoryId){
+        $name='';
+        $image_path='';
+        $description='';
+        $category_id=0;
+        $year=null;
+        $is_open=0;
+        $getTopic=[];
+        $topics=[];
+        $id=0;
+
+        $stmt =$this->connection -> prepare("SELECT id, name, image_path, description, year, isOpen, category_id FROM topics WHERE category_id = ?");
+        $stmt -> bind_param('i', $categoryId);
+        $stmt -> execute();
+        $stmt -> store_result();
+        $stmt -> bind_result($id, $name, $image_path, $description,$year,$is_open,$category_id);
+
+        while ($stmt->fetch()) {
+            $getTopic = array("id"          => $id,
+                              "name"        => $name,
+                              "image_path"  => $image_path,
+                              "description" => $description,
+                              "year"        => $year,
+                              "is_open"     => $is_open,
+                              "category_id" => $category_id);
+            array_push($topics, $getTopic);
+        }
+        $stmt->close();
+            
+        return $topics;
+    }
+
     public function getTopic($topicId){
         $name='';
         $image_path='';
         $description='';
+        $category_id=0;
         $year=null;
         $is_open=0;
         if($topicId > 0){
             //$topicId = mysqli_real_escape_string($this->connection, trim($topicId));
-            $stmt = $this->connection -> prepare('SELECT name, image_path, description, year, isOpen FROM topics WHERE id = ?');
+            $stmt = $this->connection -> prepare('SELECT name, image_path, description, year, isOpen, category_id FROM topics WHERE id = ?');
             $stmt -> bind_param('i', $topicId);
             $stmt -> execute(); // get the mysqli result
             $stmt -> store_result(); 
-            $stmt -> bind_result($name, $image_path, $description,$year,$is_open);
+            $stmt -> bind_result($name, $image_path, $description,$year,$is_open,$category_id);
             $stmt -> fetch();
             $stmt -> free_result(); 
-            return json_encode(["success"=>1,"name"=>$name, "image_path"=>$image_path, "description"=>$description, "year" => $year, "is_open" => $is_open]);
+            return json_encode(["success"=>1,"name"=>$name, "image_path"=>$image_path, "description"=>$description, "year" => $year, "is_open" => $is_open, "category_id" => $category_id]);
         }
         return json_encode(["success"=>0,"msg"=>"Topic does not exist!"]);
     }
@@ -50,9 +83,9 @@ class TopicClass extends MySQL{
             $currentDate = $now->format('Y-m-d H:i:s');
             $newTopicId=0;
 
-            $stmtInsert = $this->connection -> prepare('INSERT INTO topics(imdb_id,name,description,year,created) 
-                                                    VALUES(?,?,?,?,?)');
-            $stmtInsert -> bind_param('sssis', $newTopic['imdbId'], $newTopic['name'], $newTopic['description'], $newTopic['year'], $currentDate);
+            $stmtInsert = $this->connection -> prepare('INSERT INTO topics(imdb_id,category_id,name,description,year,created) 
+                                                    VALUES(?,?,?,?,?,?)');
+            $stmtInsert -> bind_param('sissis', $newTopic['imdbId'], $newTopic['categoryId'], $newTopic['name'], $newTopic['description'], $newTopic['year'], $currentDate);
             if($stmtInsert -> execute()){
                 $newTopicId = mysqli_insert_id($this->connection);
                 $stmtInsert->close();

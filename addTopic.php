@@ -13,6 +13,7 @@
         $adminRoleId=0;
         $currentUserRoles=[];
         $currentUser=null;
+        $allCategories=[];
 
         if (!empty($_SESSION["user_id"])) {
             include_once 'src/DB/UserClass.php';
@@ -28,6 +29,10 @@
             if(in_array(1,$currentUserRoles)){
                 $adminRoleId=1;
             }
+
+            include_once 'src/DB/CategoriesClass.php';
+            $categories = new CategoriesClass();
+            $allCategories = $categories->getAllCategories();
         }
     
         if(isset($_POST['newTopic']) 
@@ -91,6 +96,12 @@
                         echo '      <div class="topic-col">
                                         <label>Topic namn</label>
                                         <input type="text" name="newTopic[name]"   id="name" maxlength="160" required>
+                                        <label>Categories</label>
+                                        <select name="newTopic[categoryId]" id="categoryId">';
+                                        foreach ($allCategories as $category){
+                                            echo '<option value="'.$category['id'].'">'.$category['name'].'</option>';
+                                        }
+                        echo'           </select>
                                         <label>Imdb id</label>
                                         <input type="text"  name="newTopic[imdbId]"   id="imdbId" required>
                                         <label>År</label>

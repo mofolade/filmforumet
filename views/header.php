@@ -17,10 +17,9 @@
     echo '<a href="./">Filmforumet</a>';     
     echo '<div id="navbar-r">';
     echo '<a href="./about.php">About</a>';
+    echo '<a href="./addTopic.php">Add topic</a>';
     if(in_array(1,$currentUserRoles)){
         echo '<a href="./admin.php">Admin</a>';
-        echo '<a href="./addTopic.php">Add topic</a>';
-
     }
     if(in_array(2,$currentUserRoles)){
         echo '<a href="./moderator.php">Moderator</a>';

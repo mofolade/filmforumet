@@ -29,7 +29,7 @@ class AuthClass extends MySQL{
         if($userId > 0){            
             //if(password_verify($login['password'], $password)){
             if(password_verify($login['password'], $password)){
-                $this->setSession($userId);
+                //$this->setSession($userId);
                 return json_encode(["success" => 1,
                                     "user_id" => $userId,
                                     "name" => $userName,

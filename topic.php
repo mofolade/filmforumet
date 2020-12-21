@@ -5,7 +5,7 @@
 <html lang="en">
     <?php
         $currentUserRoles=[];
-        $moderatorTopicRights=[];
+        $moderatorRights=[];
         $adminRoleId=0;
         $moderatorRoleId=0;
 
@@ -26,9 +26,9 @@
                 $adminRoleId=1;
             } else if(in_array(2,$currentUserRoles)){
                 $moderatorRoleId=2;
-                include_once './src/DB/ModeratorXTopicClass.php';
-                $moderatorTopicRights = new ModeratorXTopicClass();
-                $moderatorRights = $moderatorTopicRights->getModeratorTopicsRights($_SESSION["user_id"]);
+                include_once './src/DB/ModeratorXCategoryClass.php';
+                $moderatorCategoryRights = new ModeratorXCategoryClass();
+                $moderatorRights = $moderatorCategoryRights->getModeratorCategoriesRights($_SESSION["user_id"]);
             }
 
             include_once 'src/ACLSettingsClass.php';
@@ -172,7 +172,7 @@
                                         </div>
                                     <div class="comment-box">';
                             if(in_array(1,$currentUserRoles) 
-                            || (in_array(2,$currentUserRoles) && in_array($_GET['id'],$moderatorRights))
+                            || (in_array(2,$currentUserRoles) && in_array($getTopic['category_id'],$moderatorRights))
                             ){
                                 //admin or moderator
                                 echo'<div class="edit-links">';

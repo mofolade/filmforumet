@@ -1,5 +1,10 @@
 <?php
+  //phpinfo();
+  //include 'src/DB/SessionClass.php';
+  //$session = new SessionClass();
+  
   session_start();
+
 ?>
 <!DOCTYPE html>
   <html lang="en">
@@ -39,6 +44,8 @@
             $errorMessage = $loginResp['msg'];
           }
           elseif($loginResp['success'] == 1){
+            //AuthClassban van a setsession
+            //$session->write($session['id'],$loginResp['user_id']);
             $_SESSION['user_id'] = $loginResp['user_id'];
             $message = $loginResp['msg'];
             echo "<script>window.location.href='./';</script>";

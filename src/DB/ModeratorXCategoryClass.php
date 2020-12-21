@@ -1,27 +1,27 @@
 <?php
 require_once(dirname(__FILE__).'/classMySQL.php');
 
-class ModeratorXTopicClass extends MySQL{
+class ModeratorXCategoryClass extends MySQL{
     private $table_name = "user_role";
 
     public function __construct(){
         parent::__construct();
     }
 
-    function getModeratorTopicsRights($moderatorId){
-        $topic_id=0;
+    function getModeratorCategoriesRights($moderatorId){
+        $category_id=0;
         $rights=[];
         //select all data
-        $stmt =$this->connection -> prepare("SELECT topic_id
-                                               FROM moderatorxtopic
+        $stmt =$this->connection -> prepare("SELECT category_id
+                                               FROM moderatorxcategory
                                               WHERE user_id = ? ");
         $stmt -> bind_param('i', $moderatorId);
         $stmt -> execute();
         $stmt -> store_result();
-        $stmt -> bind_result($topic_id);
+        $stmt -> bind_result($category_id);
 
         while ($stmt->fetch()) {
-            array_push($rights, $topic_id);
+            array_push($rights, $category_id);
         }
         $stmt->close();
             
@@ -29,10 +29,10 @@ class ModeratorXTopicClass extends MySQL{
     }
     
 
-    public function addModeratorTopicRight($moderatorId,$topicId){
+    public function addModeratorCategoryRight($moderatorId,$categoryId){
         $moderatorRightId=0;
-        $stmt = $this->connection -> prepare('SELECT id FROM moderatorxtopic WHERE user_id = ? AND topic_id = ?');
-        $stmt -> bind_param('ii', $moderatorId, $topicId);
+        $stmt = $this->connection -> prepare('SELECT id FROM moderatorxcategory WHERE user_id = ? AND category_id = ?');
+        $stmt -> bind_param('ii', $moderatorId, $categoryId);
         $stmt -> execute();
         $stmt -> store_result();
         $stmt -> bind_result($moderatorRightId);
@@ -46,9 +46,9 @@ class ModeratorXTopicClass extends MySQL{
             $currentDate = $now->format('Y-m-d H:i:s');
             $newRightId=0;
 
-            $stmtInsert = $this->connection -> prepare('INSERT INTO moderatorxtopic(user_id, topic_id ,created) 
+            $stmtInsert = $this->connection -> prepare('INSERT INTO moderatorxcategory(user_id, category_id ,created) 
                                                     VALUES(?,?,?)');
-            $stmtInsert -> bind_param('iis', $moderatorId, $topicId, $currentDate);
+            $stmtInsert -> bind_param('iis', $moderatorId, $categoryId, $currentDate);
             if($stmtInsert -> execute()){
                 $newRightId = mysqli_insert_id($this->connection);
                 $stmtInsert->close();
@@ -61,11 +61,11 @@ class ModeratorXTopicClass extends MySQL{
         return json_encode(["success"=>0,"msg"=>"User role Not Inserted!"]);
     }
 
-    public function deleteModeratorTopicRight($moderatorId,$topicId){
+    public function deleteModeratorTopicRight($moderatorId,$categoryId){
 
         $moderatorRightId = 0;
-        $stmt = $this->connection -> prepare('SELECT id FROM moderatorxtopic WHERE user_id = ? AND topic_id = ?');
-        $stmt -> bind_param('ii', $moderatorId, $topicId);
+        $stmt = $this->connection -> prepare('SELECT id FROM moderatorxcategory WHERE user_id = ? AND category_id = ?');
+        $stmt -> bind_param('ii', $moderatorId, $categoryId);
         $stmt -> execute();
         $stmt -> store_result();
         $stmt -> bind_result($moderatorRightId);
@@ -74,8 +74,8 @@ class ModeratorXTopicClass extends MySQL{
         $stmt -> close();
 
         if ($moderatorRightId > 0){
-            $stmt = $this->connection -> prepare('DELETE FROM moderatorxtopic WHERE user_id = ? AND topic_id = ?');
-            $stmt -> bind_param('ii', $moderatorId, $topicId);
+            $stmt = $this->connection -> prepare('DELETE FROM moderatorxcategory WHERE user_id = ? AND category_id = ?');
+            $stmt -> bind_param('ii', $moderatorId, $categoryId);
             $stmt -> execute();
         }
         return null;

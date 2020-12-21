@@ -28,8 +28,18 @@ class ACLSettingsClass{
   }
 
   public function topics($method, $userRoleId) {
+    // Allow all to create a topic.
+    if ($method === 'POST') { return true;}
+    // Allow all to a see a list of topic
+    if ($method === 'GET') { return true; }
+    // Allow admins to delete topic
+    if ($method === 'DELETE' && ($userRoleId==1 || $userRoleId==2)) { return true; }
+    return false; // otherwise do not allow the request
+  }
+
+  public function categories($method, $userRoleId) {
     // Allow admins to create a topic.
-    if ($method === 'POST' && $userRoleId==1) { return true;}
+    if ($method === 'POST' && ($userRoleId==1)) { return true;}
     // Allow all to a see a list of topic
     if ($method === 'GET') { return true; }
     // Allow admins to delete topic
