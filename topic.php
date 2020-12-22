@@ -52,10 +52,10 @@
 
         if(isset($_POST['newComment']) && $ACLSettings->comments('POST') == true) {
             $newComment = $_POST['newComment'];
-            include_once('src/RemoveEmojiClass.php');
-            $removeEmoji = new RemoveEmojiClass();
+            include_once('src/General.php');
+            $general = new General();
 
-            $newComment['description'] = $removeEmoji->remove_emoji($newComment['description']);
+            $newComment['description'] = $general->remove_emoji($newComment['description']);
             $newCommentResp = $topicComment->addComment($newComment);
             echo "<script>window.location.href='./topic.php?id=".$_GET['id']."';</script>";
             exit;

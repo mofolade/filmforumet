@@ -1,7 +1,7 @@
 
 <?php
 
-class RemoveEmojiClass {
+class General {
 
     public function __construct(){
         
