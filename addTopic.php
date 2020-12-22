@@ -34,10 +34,14 @@
             $categories = new CategoriesClass();
             $allCategories = $categories->getAllCategories();
         }
+        else{
+            echo "<script>window.location.href='./login.php';</script>";
+            exit;
+        }
     
         if(isset($_POST['newTopic']) 
-            && in_array(1,$currentUserRoles)
-            && $ACLSettings->topics('POST', $adminRoleId) == true
+            && !empty($_SESSION["user_id"])
+            && $ACLSettings->topics('POST', '', $_SESSION["user_id"]) == true
             ) {
             $newTopic = $_POST['newTopic'];
             
@@ -95,7 +99,7 @@
                                 <h2 style="text-align:center">Ny topic</h2>';
                         echo '      <div class="topic-col">
                                         <label>Topic namn</label>
-                                        <input type="text" name="newTopic[name]"   id="name" maxlength="160" required>
+                                        <input type="text" name="newTopic[name]"   id="name" maxlength="200" required>
                                         <label>Categories</label>
                                         <select name="newTopic[categoryId]" id="categoryId">';
                                         foreach ($allCategories as $category){
@@ -103,9 +107,9 @@
                                         }
                         echo'           </select>
                                         <label>Imdb id</label>
-                                        <input type="text"  name="newTopic[imdbId]"   id="imdbId" required>
+                                        <input type="text"  name="newTopic[imdbId]"  id="imdbId" required>
                                         <label>År</label>
-                                        <input type="number"  name="newTopic[year]"   id="year" required>
+                                        <input type="number"  name="newTopic[year]"   id="year" maxlength="4" required>
                                         <label>Film beskrivning</label>
                                         <textarea name="newTopic[description]"  id="description" required="required"></textarea>
                                         <div class="img-upload-container">

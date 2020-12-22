@@ -27,9 +27,9 @@ class ACLSettingsClass{
     return false; // otherwise do not allow the request
   }
 
-  public function topics($method, $userRoleId) {
+  public function topics($method, $userRoleId, $userId) {
     // Allow all to create a topic.
-    if ($method === 'POST') { return true;}
+    if ($method === 'POST' && isset($userId)) { return true;}
     // Allow all to a see a list of topic
     if ($method === 'GET') { return true; }
     // Allow admins to delete topic

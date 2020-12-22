@@ -52,6 +52,10 @@
 
         if(isset($_POST['newComment']) && $ACLSettings->comments('POST') == true) {
             $newComment = $_POST['newComment'];
+            include_once('src/RemoveEmojiClass.php');
+            $removeEmoji = new RemoveEmojiClass();
+
+            $newComment['description'] = $removeEmoji->remove_emoji($newComment['description']);
             $newCommentResp = $topicComment->addComment($newComment);
             echo "<script>window.location.href='./topic.php?id=".$_GET['id']."';</script>";
             exit;
@@ -70,7 +74,9 @@
 
         if(isset($_POST['closure'])
             && $_POST['closure'] == 1
-            && ($ACLSettings->topics('DELETE', $adminRoleId) == true || $ACLSettings->topics('DELETE', $moderatorRoleId) == true)) {
+            && !empty($_SESSION["user_id"])
+            && ($ACLSettings->topics('DELETE', $adminRoleId,$_SESSION["user_id"]) == true 
+                        || $ACLSettings->topics('DELETE', $moderatorRoleId,$_SESSION["user_id"]) == true)) {
             $resp = $topic->closureTopic($_GET['id']);
             echo "<script>window.location.href='./topic.php?id=".$_GET['id']."';</script>";
             exit;
@@ -99,7 +105,7 @@
                             if(in_array(1,$currentUserRoles) || in_array(2,$currentUserRoles)){
                                 echo '      <form action="'.$_SERVER['REQUEST_URI'].'" method="post" enctype="multipart/form-data">';
                                 echo '          <input type="hidden" name="closure" value="1">';
-                                echo '          <input type="submit" class="btn-closure" value="Closure" style="margin-bottom: 5px">
+                                echo '          <input type="submit" class="btn-closure btn-success" value="Closure" style="margin-bottom: 5px">
                                             </form>';
                             }
                             if($getTopic['is_open'] == 1){
@@ -127,7 +133,9 @@
                                                         <div class="comment-box">
                                                             <div style="height: 80%;">
                                                                 <form action="'.$_SERVER['REQUEST_URI'].'" method="post" enctype="multipart/form-data">
-                                                                    <textarea name="newComment[description]"  id="description" required="required"></textarea>
+                                                                    <textarea name="newComment[description]"
+                                                                    maxlength="500"
+                                                                    id="description" required="required"></textarea>
                                                                     <input type="hidden" name="newComment[topicId]" value="'.$_GET['id'].'">
                                                                     <input type="hidden" name="newComment[userId]" value="'.$currentUser['user_id'].'">
                                                                     <input type="hidden" name="newComment[commentId]" value="';

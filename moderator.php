@@ -58,8 +58,12 @@
 
                 include_once 'src/DB/ModeratorXCategoryClass.php';
                 $moderatorRight = new ModeratorXCategoryClass();
-
-                $moderatorCategoryRights = $moderatorRight->getModeratorCategoriesRights($_GET['id']);
+                if(isset($_GET['id'])){
+                    $moderatorCategoryRights = $moderatorRight->getModeratorCategoriesRights($_GET['id']);
+                }
+                elseif(in_array(2,$currentUserRoles)){
+                    $moderatorCategoryRights = $moderatorRight->getModeratorCategoriesRights($_SESSION["user_id"]);
+                }
 
                 if(isset($_POST['categoryId'])
                     && ($_POST['action'] == 'addRight')
@@ -70,7 +74,7 @@
                 }else if(isset($_POST['categoryId']) 
                     && ($_POST['action'] == 'deleteRight')
                     && ($ACLSettings->moderator('POST', $adminRoleId) == true)){
-                    $resp = $moderatorRight -> deleteModeratorTopicRight($_GET['id'], $_POST['categoryId']);
+                    $resp = $moderatorRight -> deleteModeratorCategoryRight($_GET['id'], $_POST['categoryId']);
                     echo "<script>window.location.href='./moderator.php?id=".$_GET['id']."';</script>";
                     exit;
                 }                

@@ -84,38 +84,39 @@
                         }
 
                         echo '<form method="post" action="'.$_SERVER['REQUEST_URI'].'"  id="signup-form" autocomplete="off">';
-                        echo '<label>Name</label>';
-                        echo '<input id="username"
-                                    name="newUser[username]"
-                                    required="" 
-                                    type="text" 
-                                    class="form-control">';
+                        echo '  <label>Name</label>';
+                        echo '  <input id="text"
+                                        name="newUser[username]"
+                                        required="" 
+                                        type="text"
+                                        minlength="4"
+                                        maxlength="50"
+                                        class="form-control">';
                         if($errName){
                             echo '<small  class="text-danger">'.$errName.'</small>';
                         }
-                        echo '<label>Password</label>';
-                        echo '<input id="password"
-                                name="newUser[password]"
-                                required="" 
-                                type="password"
-                                class="form-control">';
+                        echo '  <label>Password</label>';
+                        echo '  <input id="password"
+                                    name="newUser[password]"
+                                    type="password"
+                                    pattern=".{6,12}" required title="6 to 12 characters"
+                                    class="form-control">';
                         if($errPsw){
-                            echo '<small  class="text-danger">'.$errPsw.'</small>';
+                            echo '  <small  class="text-danger">'.$errPsw.'</small>';
                         }
-                        echo '<label>Email</label>';          
-                        echo'
-                            <input id="email"
-                                name="newUser[email]"
-                                required="" 
-                                type="email" 
-                                class="form-control" 
-                                placeholder="';
+                        echo '  <label>Email</label>';          
+                        echo'   <input id="email"
+                                    name="newUser[email]"
+                                    required="" 
+                                    type="email" 
+                                    class="form-control" 
+                                    placeholder="';
                                 if(!empty($_SESSION["user_id"])) echo($user['email']);
-                        echo '">
-                            <input type="hidden" id="roleId" name="newUser[roleId]" value="3">
-                            <button data-test-submit-button="" data-bid-submit-button="" class="bid-btn btn btn-lg btn-fluid mb-4 " type="submit"> 
-                                SIGN UP
-                            </button>
+                            echo '">
+                                <input type="hidden" id="roleId" name="newUser[roleId]" value="3">
+                                <button data-test-submit-button="" data-bid-submit-button="" class="bid-btn btn btn-lg btn-fluid mb-4 " type="submit"> 
+                                    SIGN UP
+                                </button>
                                     <div class="ml-4 pt-2 text-danger"></div>
                                 </div>
                             </form>';

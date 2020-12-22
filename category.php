@@ -15,6 +15,10 @@
 
         if(isset($_GET['id']) && $ACLSettings->categories('GET', 0) == true){
             $allTopics = $topic->getAllTopicsByCategoryId($_GET['id']); 
+            include_once 'src/DB/CategoriesClass.php';
+            $category = new CategoriesClass();
+            $categoryInfo=$category->getCategory($_GET['id']);
+            $categoryInfo=json_decode($categoryInfo,true);
         }
 
         include_once 'src/DB/TopicCommentClass.php';
@@ -27,10 +31,22 @@
             <main>
                 <?php include 'views/header.php';?>
                 <div class="wrapper">
-                    <div id="topics-cover">
+                    <div id="topics-container">
                         <?php
-                        foreach ($allTopics as $topic){
-                                  
+                        if(isset($_GET['id'])){
+                            echo '  <div class="topic-info-box justify-content-center">
+                                        <div style="width: 230px;">
+                                            <div class="topic-card-little-picture">
+                                                <img class="topic-img" src="'.$categoryInfo['image_path'].'">
+                                            </div>
+                                            <div>    
+                                                <h2>'.$categoryInfo['name'].'</h2>
+                                            </div>
+                                        </div>
+                                </div>';
+                        }
+                        echo '<div id="topics-cover">';
+                        foreach ($allTopics as $topic){                                  
                             $commentInfo = $topicComment->getCommentsInfo($topic['id']);
                             $commentInfo= json_decode($commentInfo,true);
                             echo '<div class="topic-card">
@@ -49,6 +65,7 @@
                                 </div>
                             </div>';
                         }
+                        echo '</div>';
                         ?>
                     </div>
                 </div>

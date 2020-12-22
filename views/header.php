@@ -14,10 +14,13 @@
     }
     echo ' <header class="bg">';
     echo '<nav class="navbar">';
-    echo '<a href="./">Filmforumet</a>';     
+    echo '<a href="./">Movie forum</a>';     
     echo '<div id="navbar-r">';
     echo '<a href="./about.php">About</a>';
-    echo '<a href="./addTopic.php">Add topic</a>';
+    if (!empty($_SESSION["user_id"]))
+    {
+        echo '<a href="./addTopic.php">Add topic</a>';
+    }
     if(in_array(1,$currentUserRoles)){
         echo '<a href="./admin.php">Admin</a>';
     }

@@ -61,7 +61,7 @@ class ModeratorXCategoryClass extends MySQL{
         return json_encode(["success"=>0,"msg"=>"User role Not Inserted!"]);
     }
 
-    public function deleteModeratorTopicRight($moderatorId,$categoryId){
+    public function deleteModeratorCategoryRight($moderatorId,$categoryId){
 
         $moderatorRightId = 0;
         $stmt = $this->connection -> prepare('SELECT id FROM moderatorxcategory WHERE user_id = ? AND category_id = ?');

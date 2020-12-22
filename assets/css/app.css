@@ -334,6 +334,10 @@ input[type=submit]:hover {
     color: rgb(148, 141, 141);
 }
 
+.new-topic-container input[type=submit], .new-topic-container input[type=submit]:hover {
+    background-color: #45a049;
+}
+
 .topic-card-little-picture{
     margin-top: 5px;
 }
