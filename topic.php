@@ -50,15 +50,20 @@
     
         }
 
-        if(isset($_POST['newComment']) && $ACLSettings->comments('POST') == true) {
+        if(isset($_POST['newComment'])) {
             $newComment = $_POST['newComment'];
-            include_once('src/General.php');
-            $general = new General();
-
-            $newComment['description'] = $general->remove_emoji($newComment['description']);
-            $newCommentResp = $topicComment->addComment($newComment);
-            echo "<script>window.location.href='./topic.php?id=".$_GET['id']."';</script>";
-            exit;
+            if($ACLSettings->comments('POST') == true && strlen($newComment['description']) < 501){
+                include_once('src/General.php');
+                $general = new General();
+                $newComment['description'] = $general->remove_emoji($newComment['description']);
+                $newCommentResp = $topicComment->addComment($newComment);
+                echo "<script>window.location.href='./topic.php?id=".$_GET['id']."';</script>";
+                exit;
+            }
+            else{
+                $errorMessage='Comment Not Inserted!';
+            }
+            
         }
 
         if(isset($_POST['method']) && $ACLSettings->comments('POST') == true) {
@@ -89,6 +94,12 @@
                 <div class="wrapper">
                     <div class="topic-container">
                     <?php
+                    if($errorMessage){ 
+                        echo('<div class="alert-danger" role="alert"> '.$errorMessage.'  </div>');
+                    }
+                    if($message){ 
+                        echo('<div class="alert-success" role="alert"> '.$message.'  </div>');
+                    }
                     if(isset($_GET['id'])){
                         echo '  <div class="topic-info-box">
                                     <div>

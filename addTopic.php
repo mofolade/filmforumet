@@ -52,7 +52,12 @@
             elseif(empty($newTopic['imdbId'])) {
                 $errPsw= 'Please enter imdb id';
             }
-            else{
+            elseif (strlen($newTopic['name']) < 101 && strlen($newTopic['description']) < 501){
+                include_once('src/General.php');
+                $general = new General();
+                $newTopic['name'] = $general->remove_emoji($newTopic['name']);
+                $newTopic['description'] = $general->remove_emoji($newTopic['description']);
+
                 include_once 'src/DB/TopicClass.php';
                 $topic = new TopicClass();
                 $newTopicResp = $topic->addTopic($newTopic);
@@ -84,6 +89,9 @@
                     exit;
                 }
             }
+            else{
+                $errorMessage='Topic Not Inserted!';
+            }
         }
     ?>
     <body>
@@ -94,6 +102,12 @@
                     <div class="new-topic-container">
                         
                     <?php 
+                        if($errorMessage){ 
+                            echo('<div class="alert-danger" role="alert"> '.$errorMessage.'  </div>');
+                        }
+                        if($message){ 
+                            echo('<div class="alert-success" role="alert"> '.$message.'  </div>');
+                        }
                         echo '<form action="'.$_SERVER['REQUEST_URI'].'" method="post" enctype="multipart/form-data">
                             <div class="">
                                 <h2 style="text-align:center">Ny topic</h2>';
@@ -110,8 +124,9 @@
                                         <input type="text"  name="newTopic[imdbId]"  id="imdbId" required>
                                         <label>År</label>
                                         <input type="number"  name="newTopic[year]"   id="year" maxlength="4" required>
-                                        <label>Film beskrivning</label>
-                                        <textarea name="newTopic[description]"  id="description" required="required"></textarea>
+                                        <label>Film beskrivning (max 500 character)</label>
+                                        <textarea name="newTopic[description]"  id="description" 
+                                            maxlength="500" required="required"></textarea>
                                         <div class="img-upload-container">
                                             <div class="file-upload-form">
                                                 <div class="file-upload">

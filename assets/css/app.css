@@ -380,11 +380,13 @@ label{
     box-shadow: var(--box-shadow);
     margin-bottom: 1rem;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     padding: 1rem;
-    align-items: center;
 }
-
+.file-btn{
+    font-size: 12px!important;
+}
 .img-card {
     background: white;
     box-shadow: var(--box-shadow);

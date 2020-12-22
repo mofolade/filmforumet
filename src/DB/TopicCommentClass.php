@@ -95,6 +95,7 @@ class TopicCommentClass extends MySQL{
         else{
             $isSpecial = 0;
         }
+        
 
         $stmtInsert = $this->connection -> prepare('INSERT INTO topic_comments(comment,topic_id,user_id,antecedent_comment_id,isSpecial,created) 
                                                     VALUES(?,?,?,?,?,?)');
