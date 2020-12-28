@@ -5,95 +5,68 @@ class SessionClass extends MySQL implements SessionHandlerInterface{
 
     public function __construct(){
         parent::__construct();
-
-        session_set_save_handler(array($this, 'open'),
-                                 array($this, 'close'),
-                                 array($this, 'read'),
-                                 array($this, 'write'),
-                                 array($this, 'destroy'),
-                                 array($this, 'gc'));
-        // The following prevents unexpected effects when using objects as save handlers.
-        register_shutdown_function('session_write_close');
-
-        /*$this->connection;
-        // Set handler to overide SESSION  
-        session_set_save_handler(  
-            array($this, "open"),  
-            array($this, "close"),  
-            array($this, "read"),  
-            array($this, "write"),  
-            array($this, "destroy"),  
-            array($this, "gc")  
+        // Set handler to overide SESSION
+        session_set_save_handler(
+            array($this, "open"),
+            array($this, "close"),
+            array($this, "read"),
+            array($this, "write"),
+            array($this, "destroy"),
+            array($this, "gc")
         );
-        
-        session_set_save_handler('open','close','read','write','destroy','clean');
         register_shutdown_function('session_write_close');
-        // Start the session  
-        session_start();*/
     }
 
-    /*** Open ***/  
-    public function open($savepath, $id){  
-        $data='';
-        print "OPEN eleje Session opened.\n";
-        print "Sess_path: $savepath\n";
-        print "id: $id\n\n";
-        print "OPEN vege. ";
-        return true;
-        // If successful
-        //delete old session handlers
-        //$limit = time() - (3600 * 24);
-        $stmt = $this->connection ->prepare("SELECT data FROM sessions WHERE id = ? LIMIT 1");
-        $stmt -> bind_param('s',$id);
-        $stmt -> execute();
-        $stmt -> store_result();
-        $stmt -> bind_result($data);
-        $stmt -> fetch();
-        $data=$data;
-//$stmt->selectRowsFoundCounter() == 1
-        if($data !== '' ){
-            // Return True
+    /*** Open ***/
+    /**
+     * Executed when the session is started automatically, or
+     * manually with session_start();
+     *
+     * @param string $savePath
+     * @param string $sessionId
+     * @return boolean
+     */
+    public function open($savePath, $sessionId){  
+        if($this->connection){
             return true;
         }
-        // Return False
         return false;
     }
 
     /*** Close ***/  
     public function close(){  
-        print "Session closed.\n";
-        // Close the database connection  
-        // If successful  
-        if($this->connection->close()){  
-            // Return True  
-            return true;  
-        }  
-        // Return False  
-        return false;  
+        if($this->connection->close()){
+        @session_write_close();
+        return true;
+    }
+    return false;   
     }  
 
     /*** Read ***/  
-    public function read($id){  
+    public function read($sessionId){  
         print "Session read.\n";
-        print "Sess_ID: $id\n";
-        return '';
+        print "Sess_ID: $sessionId\n";
+        //return '';
         // Set query  
         $stmt = $this->connection ->prepare('SELECT data FROM sessions WHERE id = ? LIMIT 1');
     
         // Bind the Id  
-        $stmt -> bind_param('s',$id);
+        $stmt -> bind_param('s',$sessionId);
     
         // Attempt execution  
         // If successful  
-        if($stmt ->execute()){  
+        if($stmt ->execute()){
             // Save returned row  
             //$row = $stmt ->single();  
             $result = $stmt->get_result();
             $num = $result->num_rows;
             // Return the data  
             //return $row['data'];  
+            
+            print "Read eredmeny:$num \n";
             if ($num>0) {
                 $record = $result->fetch_assoc();
+                print "Read result eredmeny:".$record['data']."\n";
                 return $record['data'];
             }
         }else{  
@@ -104,29 +77,47 @@ class SessionClass extends MySQL implements SessionHandlerInterface{
     }
 
     /*** Write ***/  
-    public function write($id, $data){  
+    /**
+     * Used to save the session and close.
+     * close() is called after this function executes.
+     *
+     * @param string $sessionId Id of the current session
+     * @param string $sessionData serialized session data
+     */
+    public function write($sessionId, $data){  
         
         print "Session value written.\n";
-        print "Sess_ID: $id\n";
+        print "Sess_ID: $sessionId\n";
         print "Data: $data\n\n";
 
         // Create time stamp  
         $access = time();
-        
-        // Set query  
-        $stmt = $this->connection ->prepare('REPLACE INTO sessions (id,access,data) VALUES (?, ?, ?)');
-        
-        // Bind data  
-        $stmt -> bind_param('sis',$id,$access,$data);
-        
-        // Attempt Execution  
-        // If successful  
-        if($stmt -> execute()){  
-            // Return True  
-            return true;  
+        print "WRITE Access: $access\n\n";
+        $stmt = $this->connection->prepare("SELECT data FROM sessions WHERE id = ?");
+        // Bind the Id  
+        $stmt -> bind_param('s',$sessionId);
+
+        if($stmt ->execute()){
+            $update = $this->connection->prepare('UPDATE sessions SET data = ? AND access = ? WHERE id = ?;');
+            $update -> bind_param('sis', $data,$access,$sessionId);
+            if($update -> execute()){            
+                return true;
+            }
+        }else{
+            print "INSERT a tablaba!!";
+            // Set query  
+            $stmt = $this->connection ->prepare('INSERT INTO sessions (id,access,data) VALUES (?, ?, ?)');
+            
+            // Bind data  
+            $stmt -> bind_param('sis', $sessionId,$access,$data);
+            
+            // Attempt Execution  
+            // If successful  
+            if($stmt -> execute()){  
+                return true;  
+            }
         }
-        
-        // Return False  
+
         return false;
     }
 
