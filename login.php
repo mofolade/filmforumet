@@ -1,15 +1,6 @@
 <?php
   //phpinfo();
   include 'src/DB/SessionClass.php';
-  /*$session = new SessionClass();
-  session_set_save_handler(array($session, 'open'),
-                          array($session, 'close'),
-                          array($session, 'read'),
-                          array($session, 'write'),
-                          array($session, 'destroy'),
-                          array($session, 'gc'));
-  // the following prevents unexpected effects when using objects as save handlers
-  register_shutdown_function('session_write_close');*/
   session_start();
 
 ?>
@@ -55,14 +46,6 @@
             //$session->write($session['id'],$loginResp['user_id']);
             $_SESSION['user_id'] = $loginResp['user_id'];
             
-            /*session_set_save_handler(array($session, 'open'),
-                                    array($session, 'close'),
-                                    array($session, 'read'),
-                                    array($session, 'write'),
-                                    array($session, 'destroy'),
-                                    array($session, 'gc'));
-            session_write_close();            
-            session_start();*/
             $message = $loginResp['msg'];
             echo "<script>window.location.href='./';</script>";
             exit;

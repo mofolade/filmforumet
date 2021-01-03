@@ -98,7 +98,7 @@ class SessionClass extends MySQL implements SessionHandlerInterface{
         $stmt -> bind_param('s',$sessionId);
 
         if($stmt ->execute()){
-            $update = $this->connection->prepare('UPDATE sessions SET data = ? AND access = ? WHERE id = ?;');
+            $update = $this->connection->prepare('UPDATE sessions SET data = ? AND access = ? WHERE id = ?');
             $update -> bind_param('sis', $data,$access,$sessionId);
             if($update -> execute()){            
                 return true;

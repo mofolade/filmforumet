@@ -29,7 +29,8 @@ class AuthClass extends MySQL{
         if($userId > 0){            
             //if(password_verify($login['password'], $password)){
             if(password_verify($login['password'], $password)){
-                //$this->setSession($userId);
+                $this->setSession($userId);
+                //$this->setSessionDb($userId);
                 return json_encode(["success" => 1,
                                     "user_id" => $userId,
                                     "name" => $userName,
@@ -42,6 +43,21 @@ class AuthClass extends MySQL{
     private function setSession($userId) {
         $_SESSION['user_id'] = $userId;
     }
+
+    private function setSessionDb($userId) {
+        $session_id=session_id();
+
+        $handler = new SessionClass();
+        session_set_save_handler($handler, true);
+        session_start();
+        $_SESSION['user_id'] = $userId;
+        session_write_close();
+        session_start();
+
+        print $session_id;
+        
+    }
+  
 
     /**
      * Returns the session based on the key
