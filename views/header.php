@@ -4,8 +4,13 @@
     include_once './src/DB/UserClass.php';
     $user = new UserClass();
 
+    include_once './src/DB/AuthClass.php';
+    $checkLogin = new AuthClass();
+    $checkLogin->checkUser($_SESSION["user_id"]);
+    $checkLogin = json_decode($checkLogin, true);
 
-    if (!empty($_SESSION["user_id"])) {
+
+    if (!empty($_SESSION["user_id"]) || $checkLogin['success'] == 0) {
         $currentUser = $user->getUser($_SESSION["user_id"]);
         $currentUser = json_decode($currentUser, true);
         include_once 'src/DB/UserXRoleClass.php';
