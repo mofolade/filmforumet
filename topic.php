@@ -41,7 +41,7 @@
         include_once 'src/DB/TopicClass.php';
         $topic = new TopicClass();
 
-        if(isset($_GET['id']) && $ACLSettings->comments('GET') == true){
+        if(isset($_GET['id']) /*&& $ACLSettings->comments('GET') == true*/){
             $topicId = $_GET['id'];     
             $getTopic = $topic->getTopic($topicId);
             $getTopic = json_decode($getTopic, true);
@@ -169,6 +169,9 @@
                                                 </div>
                                             </div>
                                         </div>';
+                            }
+                            else{
+                                echo '<div class="accordion-header"><h3>Locked topic</h3></div>';
                             }
                             echo'    </div>
                                 </div>';
