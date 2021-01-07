@@ -190,6 +190,39 @@ color: #000000!important;
     flex: 1 0 auto;
     margin: 10px;
 }
+#profile-cover{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 15px;
+}
+
+.profile{
+    font-family: sans-serif;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    margin-right: 15px;
+    max-width: 300px;
+}
+
+.profile_image{
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin: 0 auto 20px auto;
+    display: block;  
+}
+.profile_name{
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.profile_email{
+    margin-bottom: 20px;
+}
 
 .login-col *:focus {
     outline: none !important;
