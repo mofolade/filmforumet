@@ -37,7 +37,7 @@
                             echo '  <div class="topic-info-box justify-content-center">
                                         <div style="width: 230px;">
                                             <div class="topic-card-little-picture">
-                                                <img class="topic-img" src="'.$categoryInfo['image_path'].'">
+                                                <img class="topic-img" src="'.$categoryInfo['image_path'].'" alt="">
                                             </div>
                                             <div>    
                                                 <h2>'.$categoryInfo['name'].'</h2>
@@ -53,7 +53,7 @@
                                 <div class="topic-item-container">
                                     <div class="topic-card-little-picture">
                                         <a href="./topic.php?id='.$topic['id'].'">
-                                            <img class="topic-img" src="'.$topic['image_path'].'">
+                                            <img class="topic-img" src="'.$topic['image_path'].'" alt="">
                                         </a>
                                     </div>
                                     <div class="d-flex flex-direction-column align-items-center">

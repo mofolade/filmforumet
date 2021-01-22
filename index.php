@@ -30,7 +30,7 @@
                                 <div class="topic-item-container">
                                     <div class="topic-card-little-picture">
                                         <a href="./category.php?id='.$category['id'].'">
-                                            <img class="topic-img" src="'.$category['image_path'].'">
+                                            <img class="topic-img" src="'.$category['image_path'].'" alt="'.$category['name'].'">
                                         </a>
                                     </div>
                                     <div class="d-flex flex-direction-column align-items-center">

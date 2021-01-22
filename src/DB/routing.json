@@ -1,0 +1,7 @@
+{
+  "domain.com": 3000,
+  "www.domain.com": {
+    "redirect": "mofolade.se"
+  },
+  "sub.domain.com": 3010 
+}
